@@ -2,6 +2,8 @@
 
 Previously `connect.static()`.
 
+[![Build Status](https://travis-ci.org/expressjs/serve-static.png?branch=master)](https://travis-ci.org/expressjs/serve-static)
+
 Usage:
 
 ```js
