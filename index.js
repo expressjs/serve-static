@@ -87,6 +87,15 @@ exports = module.exports = function(root, options){
 };
 
 /**
+ * Expose mime module.
+ *
+ * If you wish to extend the mime table use this
+ * reference to the "mime" module in the npm registry.
+ */
+
+exports.mime = send.mime;
+
+/**
  * Escape the given string of `html`.
  *
  * @param {String} html
