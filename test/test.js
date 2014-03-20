@@ -2,6 +2,7 @@
 process.env.NODE_ENV = 'test';
 
 var connect = require('connect');
+var http = require('http');
 var request = require('supertest');
 var serveStatic = require('..');
 
@@ -412,6 +413,28 @@ describe('serveStatic()', function(){
         .set('If-None-Match', res.headers.etag)
         .expect(500, '- groceries', done);
       });
+    });
+  });
+
+  describe('raw http server', function(){
+    var server;
+    before(function () {
+      var middleware = serveStatic(fixtures);
+      server = http.createServer(function (req, res) {
+        middleware(req, res, function (err) {
+          res.statusCode = err ? 500 : 404;
+          res.end(err ? err.stack : '');
+        });
+      });
+    });
+    after(function (done) {
+      server.close(done);
+    });
+
+    it('should work on raw node.js http servers', function(done){
+      request(server)
+      .get('/todo.txt')
+      .expect(200, '- groceries', done);
     });
   });
 });
