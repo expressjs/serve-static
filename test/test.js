@@ -118,6 +118,12 @@ describe('serveStatic()', function(){
       .expect('cache-control', 'public, max-age=0')
       .expect(200, done)
     });
+
+    it('should handle a percent in the filename', function(done){
+      request(server)
+      .get('/percent%.txt')
+      .expect(200, done)
+    });
   });
 
   describe('hidden files', function(){
