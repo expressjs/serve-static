@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "connect": "~2.14.1",
-    "mocha": "~1.17.1",
+    "mocha": "~1.18.2",
     "should": "~3.3.0",
     "supertest": "~0.10.0"
   },
