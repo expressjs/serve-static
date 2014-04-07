@@ -10,6 +10,7 @@
  * Module dependencies.
  */
 
+var parseurl = require('parseurl');
 var resolve = require('path').resolve;
 var send = require('send');
 var url = require('url');
@@ -58,7 +59,7 @@ exports = module.exports = function(root, options){
   return function staticMiddleware(req, res, next) {
     if ('GET' != req.method && 'HEAD' != req.method) return next();
     var originalUrl = url.parse(req.originalUrl || req.url);
-    var path = parse(req).pathname;
+    var path = parseurl(req).pathname;
 
     if (path == '/' && originalUrl.pathname[originalUrl.pathname.length - 1] != '/') {
       return directory();
@@ -113,23 +114,4 @@ function escape(html) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
-};
-
-/**
- * Parse the `req` url.
- *
- * @param {ServerRequest} req
- * @return {Object}
- * @api private
- */
-
-function parse(req) {
-  var parsed = url.parse(req.url);
-
-  if (parsed.auth && !parsed.protocol && ~parsed.href.indexOf('//')) {
-    // This parses pathnames, and a strange pathname like //r@e should work
-    parsed = url.parse(req.url.replace(/@/g, '%40'));
-  }
-
-  return parsed;
 };

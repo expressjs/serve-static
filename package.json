@@ -12,6 +12,7 @@
     "url": "https://github.com/expressjs/serve-static/issues"
   },
   "dependencies": {
+    "parseurl": "1.0.1",
     "send": "0.2.0"
   },
   "devDependencies": {

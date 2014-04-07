@@ -1,6 +1,7 @@
 HEAD
 
   * Resolve relative paths at middleware setup
+  * Use parseurl to parse the URL from request
 
 1.0.3 / 2014-03-20
 ==================
