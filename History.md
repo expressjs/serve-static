@@ -1,3 +1,7 @@
+HEAD
+
+  * Resolve relative paths at middleware setup
+
 1.0.3 / 2014-03-20
 ==================
 

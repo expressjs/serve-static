@@ -3,10 +3,14 @@ process.env.NODE_ENV = 'test';
 
 var connect = require('connect');
 var http = require('http');
+var path = require('path');
 var request = require('supertest');
 var serveStatic = require('..');
 
 var fixtures = __dirname + '/fixtures';
+var relative = path.relative(process.cwd(), fixtures);
+
+var skipRelative = ~relative.indexOf('..') || path.resolve(relative) === relative;
 
 describe('serveStatic()', function(){
   describe('basic operations', function(){
@@ -119,6 +123,23 @@ describe('serveStatic()', function(){
       .expect(200, done)
     });
   });
+
+  (skipRelative ? describe.skip : describe)('current dir', function(){
+    var server;
+    before(function () {
+      server = createServer('.');
+    });
+    after(function (done) {
+      server.close(done);
+    });
+
+    it('should be served with "."', function(done){
+      var dest = relative.split(path.sep).join('/');
+      request(server)
+      .get('/' + dest + '/todo.txt')
+      .expect(200, '- groceries', done);
+    })
+  })
 
   describe('hidden files', function(){
     var server;

@@ -10,6 +10,7 @@
  * Module dependencies.
  */
 
+var resolve = require('path').resolve;
 var send = require('send');
 var url = require('url');
 
@@ -47,6 +48,9 @@ exports = module.exports = function(root, options){
 
   // root required
   if (!root) throw new TypeError('root path required');
+
+  // resolve root to absolute
+  root = resolve(root);
 
   // default redirect
   var redirect = false !== options.redirect;
