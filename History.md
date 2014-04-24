@@ -1,6 +1,7 @@
 HEAD
 ====
 
+  * Accept options directly to `send` module
   * deps: send@0.3.0
 
 1.0.4 / 2014-04-07

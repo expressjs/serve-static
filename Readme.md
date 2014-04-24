@@ -12,7 +12,7 @@ var serveStatic = require('serve-static');
 
 var app = connect();
 
-app.use(serveStatic('public/ftp', {'index': 'default.html'}));
+app.use(serveStatic('public/ftp', {'index': ['default.html', 'default.htm']}));
 app.listen();
 ```
 

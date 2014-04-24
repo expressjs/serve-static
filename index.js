@@ -38,6 +38,8 @@ var url = require('url');
  *    - `redirect`   Redirect to trailing "/" when the pathname is a dir. defaults to true
  *    - `index`      Default file name, defaults to 'index.html'
  *
+ *   Further options are forwarded on to `send`.
+ *
  * @param {String} root
  * @param {Object} options
  * @return {Function}
@@ -45,7 +47,7 @@ var url = require('url');
  */
 
 exports = module.exports = function(root, options){
-  options = options || {};
+  options = extend({}, options);
 
   // root required
   if (!root) throw new TypeError('root path required');
@@ -56,8 +58,13 @@ exports = module.exports = function(root, options){
   // default redirect
   var redirect = false !== options.redirect;
 
+  // setup options for send
+  options.maxage = options.maxage || options.maxAge || 0;
+  options.root = root;
+
   return function staticMiddleware(req, res, next) {
     if ('GET' != req.method && 'HEAD' != req.method) return next();
+    var opts = extend({}, options);
     var originalUrl = url.parse(req.originalUrl || req.url);
     var path = parseurl(req).pathname;
 
@@ -80,11 +87,7 @@ exports = module.exports = function(root, options){
       next(err);
     }
 
-    send(req, path)
-      .maxage(options.maxAge || 0)
-      .root(root)
-      .index(options.index || 'index.html')
-      .hidden(options.hidden)
+    send(req, path, opts)
       .on('error', error)
       .on('directory', directory)
       .pipe(res);
@@ -114,4 +117,23 @@ function escape(html) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
+};
+
+/**
+ * Shallow clone a single object.
+ *
+ * @param {Object} obj
+ * @param {Object} source
+ * @return {Object}
+ * @api private
+ */
+
+function extend(obj, source) {
+  if (!source) return obj;
+
+  for (var prop in source) {
+    obj[prop] = source[prop];
+  }
+
+  return obj;
 };
