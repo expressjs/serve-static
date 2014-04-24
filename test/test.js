@@ -447,6 +447,7 @@ describe('serveStatic()', function(){
           res.end(err ? err.stack : '');
         });
       });
+      server.listen();
     });
     after(function (done) {
       server.close(done);
