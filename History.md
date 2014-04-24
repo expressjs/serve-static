@@ -1,5 +1,5 @@
-HEAD
-====
+1.1.0 / 2014-04-24
+==================
 
   * Accept options directly to `send` module
   * deps: send@0.3.0
