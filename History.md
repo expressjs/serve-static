@@ -1,3 +1,13 @@
+HEAD
+====
+
+  * deps: send@0.4.0
+    - Calculate ETag with md5 for reduced collisions
+    - Fix wrong behavior when index file matches directory
+    - Ignore stream errors after request ends
+    - Skip directories in index file search
+    - deps: debug@0.8.1
+
 1.1.0 / 2014-04-24
 ==================
 
