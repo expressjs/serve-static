@@ -1,5 +1,5 @@
-HEAD
-====
+1.2.0 / 2014-05-29
+==================
 
   * deps: send@0.4.0
     - Calculate ETag with md5 for reduced collisions
