@@ -1,8 +1,9 @@
 # Serve Static
 
-Previously `connect.static()`.
-
+[![NPM version](https://badge.fury.io/js/serve-static.svg)](http://badge.fury.io/js/serve-static)
 [![Build Status](https://travis-ci.org/expressjs/serve-static.svg?branch=master)](https://travis-ci.org/expressjs/serve-static)
+
+Previously `connect.static()`.
 
 Usage:
 
