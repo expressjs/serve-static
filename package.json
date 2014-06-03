@@ -1,7 +1,7 @@
 {
   "name": "serve-static",
   "description": "Serve static files",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "author": "Douglas Christopher Wilson <doug@somethingdoug.com>",
   "license": "MIT",
   "repository": {

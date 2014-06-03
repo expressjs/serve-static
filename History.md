@@ -1,5 +1,5 @@
-unreleased
-==========
+1.2.1 / 2014-06-02
+==================
 
   * use `escape-html` for escaping
   * deps: send@0.4.1
