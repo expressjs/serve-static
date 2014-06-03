@@ -16,6 +16,7 @@
     "send": "0.4.0"
   },
   "devDependencies": {
+    "istanbul": "0.2.10",
     "mocha": "~1.20.0",
     "should": "~4.0.0",
     "supertest": "~0.13.0"
@@ -24,6 +25,8 @@
     "node": ">= 0.8.0"
   },
   "scripts": {
-    "test": "mocha --reporter spec --require should"
+    "test": "mocha --reporter dot --require should test/",
+    "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --require should test/",
+    "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --require should test/"
   }
 }
