@@ -14,7 +14,7 @@
   "dependencies": {
     "escape-html": "1.0.1",
     "parseurl": "1.0.1",
-    "send": "0.4.0"
+    "send": "0.4.1"
   },
   "devDependencies": {
     "istanbul": "0.2.10",
