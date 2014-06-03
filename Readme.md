@@ -2,6 +2,7 @@
 
 [![NPM version](https://badge.fury.io/js/serve-static.svg)](http://badge.fury.io/js/serve-static)
 [![Build Status](https://travis-ci.org/expressjs/serve-static.svg?branch=master)](https://travis-ci.org/expressjs/serve-static)
+[![Coverage Status](https://img.shields.io/coveralls/expressjs/serve-static.svg?branch=master)](https://coveralls.io/r/expressjs/serve-static)
 
 Previously `connect.static()`.
 
