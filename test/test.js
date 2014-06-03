@@ -1,7 +1,4 @@
 
-process.env.NODE_ENV = 'test';
-
-var connect = require('connect');
 var http = require('http');
 var path = require('path');
 var request = require('supertest');
@@ -17,9 +14,6 @@ describe('serveStatic()', function(){
     var server;
     before(function () {
       server = createServer();
-    });
-    after(function (done) {
-      server.close(done);
     });
 
     it('should serve static files', function(done){
@@ -129,9 +123,6 @@ describe('serveStatic()', function(){
     before(function () {
       server = createServer('.');
     });
-    after(function (done) {
-      server.close(done);
-    });
 
     it('should be served with "."', function(done){
       var dest = relative.split(path.sep).join('/');
@@ -146,9 +137,6 @@ describe('serveStatic()', function(){
     before(function () {
       server = createServer(fixtures, {'hidden': true});
     });
-    after(function (done) {
-      server.close(done);
-    });
 
     it('should be served when hidden: true is given', function(done){
       request(server)
@@ -161,9 +149,6 @@ describe('serveStatic()', function(){
     var server;
     before(function () {
       server = createServer(fixtures, {'maxAge': Infinity});
-    });
-    after(function (done) {
-      server.close(done);
     });
 
     it('should be reasonable when infinite', function(done){
@@ -178,9 +163,6 @@ describe('serveStatic()', function(){
     var server;
     before(function () {
       server = createServer();
-    });
-    after(function (done) {
-      server.close(done);
     });
 
     it('should respond with 403 Forbidden', function(done){
@@ -201,9 +183,6 @@ describe('serveStatic()', function(){
     before(function () {
       server = createServer();
     });
-    after(function (done) {
-      server.close(done);
-    });
 
     it('should next()', function(done){
       request(server)
@@ -216,9 +195,6 @@ describe('serveStatic()', function(){
     var server;
     before(function () {
       server = createServer();
-    });
-    after(function (done) {
-      server.close(done);
     });
 
     it('should support byte ranges', function(done){
@@ -319,9 +295,6 @@ describe('serveStatic()', function(){
     before(function () {
       server = createServer();
     });
-    after(function (done) {
-      server.close(done);
-    });
 
     it('should respond with 400', function(done){
       request(server)
@@ -334,9 +307,6 @@ describe('serveStatic()', function(){
     var server;
     before(function () {
       server = createServer();
-    });
-    after(function (done) {
-      server.close(done);
     });
 
     it('should next()', function(done){
@@ -353,9 +323,6 @@ describe('serveStatic()', function(){
     before(function () {
       server = createServer();
     });
-    after(function (done) {
-      server.close(done);
-    });
 
     it('should next()', function(done) {
       request(server)
@@ -367,12 +334,10 @@ describe('serveStatic()', function(){
   describe('when index at mount point', function(){
     var server;
     before(function () {
-      var app = connect();
-      app.use('/users', serveStatic('test/fixtures/users'));
-      server = app.listen();
-    });
-    after(function (done) {
-      server.close(done);
+      server = createServer('test/fixtures/users', null, function (req) {
+        req.originalUrl = req.url;
+        req.url = '/' + req.url.split('/').slice(2).join('/');
+      });
     });
 
     it('should redirect correctly', function (done) {
@@ -386,12 +351,10 @@ describe('serveStatic()', function(){
   describe('when mounted', function(){
     var server;
     before(function () {
-      var app = connect();
-      app.use('/static', serveStatic(fixtures));
-      server = app.listen();
-    });
-    after(function (done) {
-      server.close(done);
+      server = createServer(fixtures, null, function (req) {
+        req.originalUrl = req.url;
+        req.url = '/' + req.url.split('/').slice(2).join('/');
+      });
     });
 
     it('should redirect relative to the originalUrl', function(done){
@@ -405,22 +368,10 @@ describe('serveStatic()', function(){
   describe('when responding non-2xx or 304', function(){
     var server;
     before(function () {
-      var app = connect();
       var n = 0;
-
-      app.use(function(req, res, next){
-        switch (n++) {
-          case 0: return next();
-          case 1: res.statusCode = 500; return next();
-        }
+      server = createServer(fixtures, null, function (req, res) {
+        if (n++) res.statusCode = 500;
       });
-
-      app.use(serveStatic(fixtures));
-
-      server = app.listen();
-    });
-    after(function (done) {
-      server.close(done);
     });
 
     it('should respond as-is', function(done){
@@ -436,38 +387,18 @@ describe('serveStatic()', function(){
       });
     });
   });
-
-  describe('raw http server', function(){
-    var server;
-    before(function () {
-      var middleware = serveStatic(fixtures);
-      server = http.createServer(function (req, res) {
-        middleware(req, res, function (err) {
-          res.statusCode = err ? 500 : 404;
-          res.end(err ? err.stack : '');
-        });
-      });
-      server.listen();
-    });
-    after(function (done) {
-      server.close(done);
-    });
-
-    it('should work on raw node.js http servers', function(done){
-      request(server)
-      .get('/todo.txt')
-      .expect(200, '- groceries', done);
-    });
-  });
 });
 
-function createServer(dir, opts) {
-  var app = connect();
+function createServer(dir, opts, fn) {
   dir = dir || fixtures;
-  app.use(serveStatic(dir, opts));
-  app.use(function(req, res){
-    res.statusCode = 404;
-    res.end('sorry!');
+
+  var _serve = serveStatic(dir, opts);
+
+  return http.createServer(function (req, res) {
+    fn && fn(req, res);
+    _serve(req, res, function (err) {
+      res.statusCode = err ? (err.status || 500) : 404;
+      res.end(err ? err.stack : 'sorry!');
+    });
   });
-  return app.listen();
 }
