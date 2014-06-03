@@ -10,6 +10,7 @@
  * Module dependencies.
  */
 
+var escapeHtml = require('escape-html');
 var parseurl = require('parseurl');
 var resolve = require('path').resolve;
 var send = require('send');
@@ -79,7 +80,7 @@ exports = module.exports = function(root, options){
       target = url.format(originalUrl);
       res.statusCode = 303;
       res.setHeader('Location', target);
-      res.end('Redirecting to ' + escape(target));
+      res.end('Redirecting to ' + escapeHtml(target));
     }
 
     function error(err) {
@@ -102,22 +103,6 @@ exports = module.exports = function(root, options){
  */
 
 exports.mime = send.mime;
-
-/**
- * Escape the given string of `html`.
- *
- * @param {String} html
- * @return {String}
- * @api private
- */
-
-function escape(html) {
-  return String(html)
-    .replace(/&(?!\w+;)/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-};
 
 /**
  * Shallow clone a single object.

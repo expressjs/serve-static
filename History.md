@@ -1,3 +1,8 @@
+unreleased
+==========
+
+  * use `escape-html` for escaping
+
 1.2.0 / 2014-05-29
 ==================
 
