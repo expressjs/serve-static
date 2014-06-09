@@ -4,13 +4,7 @@
   "version": "1.2.1",
   "author": "Douglas Christopher Wilson <doug@somethingdoug.com>",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/expressjs/serve-static.git"
-  },
-  "bugs": {
-    "url": "https://github.com/expressjs/serve-static/issues"
-  },
+  "repository": "expressjs/serve-static",
   "dependencies": {
     "escape-html": "1.0.1",
     "parseurl": "1.0.1",
