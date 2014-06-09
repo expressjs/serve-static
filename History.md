@@ -1,5 +1,5 @@
-unreleased
-==========
+1.2.2 / 2014-06-09
+==================
 
   * deps: send@0.4.2
     - fix "event emitter leak" warnings
