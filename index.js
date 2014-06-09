@@ -1,5 +1,5 @@
 /*!
- * Connect - static
+ * serve-static
  * Copyright(c) 2010 Sencha Inc.
  * Copyright(c) 2011 TJ Holowaychuk
  * Copyright(c) 2014 Douglas Christopher Wilson

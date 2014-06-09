@@ -1,4 +1,4 @@
-# Serve Static
+# serve-static
 
 [![NPM version](https://badge.fury.io/js/serve-static.svg)](http://badge.fury.io/js/serve-static)
 [![Build Status](https://travis-ci.org/expressjs/serve-static.svg?branch=master)](https://travis-ci.org/expressjs/serve-static)
@@ -6,16 +6,63 @@
 
 Previously `connect.static()`.
 
-Usage:
+## Install
+
+```sh
+$ npm install serve-static
+```
+
+## API
 
 ```js
-var connect = require('connect');
-var serveStatic = require('serve-static');
+var serveStatic = require('serve-static')
+```
 
-var app = connect();
+### serveStatic(root, options)
 
-app.use(serveStatic('public/ftp', {'index': ['default.html', 'default.htm']}));
-app.listen();
+Create a new middleware function to serve files from within a given root
+directory. The file to serve will be determined by combining `req.url`
+with the provided root directory.
+
+Options:
+
+- `hidden` Allow transfer of hidden files. defaults to `false`
+- `index` Default file name, defaults to `'index.html'`
+- `maxAge` Browser cache maxAge in milliseconds. defaults to `0`
+- `redirect` Redirect to trailing "/" when the pathname is a dir. defaults to `true`
+
+## Examples
+
+### Serve files with vanilla node.js http server
+
+```js
+var finalhandler = require('finalhandler')
+var http = require('http')
+var serveStatic = require('serve-static')
+
+// Serve up public/ftp folder
+var serve = serveStatic('public/ftp', {'index': ['index.html', 'index.htm']})
+
+// Create server
+var server = http.createServer(function(req, res){
+  var done = finalhandler(req, res)
+  serve(req, res, done)
+})
+
+// Listen
+server.listen(3000)
+```
+
+### Serve all files from ftp folder
+
+```js
+var connect = require('connect')
+var serveStatic = require('serve-static')
+
+var app = connect()
+
+app.use(serveStatic('public/ftp', {'index': ['default.html', 'default.htm']}))
+app.listen(3000)
 ```
 
 ## License
