@@ -1,3 +1,13 @@
+unreleased
+==========
+
+  * deps: send@0.4.3
+    - Do not throw un-catchable error on file open race condition
+    - Use `escape-html` for HTML escaping
+    - deps: debug@1.0.2
+    - deps: finished@1.2.2
+    - deps: fresh@0.2.2
+
 1.2.2 / 2014-06-09
 ==================
 
