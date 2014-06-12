@@ -1,5 +1,5 @@
-unreleased
-==========
+1.2.3 / 2014-06-11
+==================
 
   * deps: send@0.4.3
     - Do not throw un-catchable error on file open race condition
