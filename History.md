@@ -1,3 +1,8 @@
+unreleased
+==========
+
+  * Include HTML link in redirect response
+
 1.2.3 / 2014-06-11
 ==================
 

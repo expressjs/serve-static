@@ -54,24 +54,6 @@ describe('serveStatic()', function(){
       .expect(404, done);
     });
 
-    it('should redirect directories with query string', function (done) {
-      request(server)
-      .get('/users?name=john')
-      .expect('Location', '/users/?name=john', done);
-    });
-
-    it('should redirect directories', function(done){
-      request(server)
-      .get('/users')
-      .expect(303, done);
-    });
-
-    it('should not redirect incorrectly', function (done) {
-      request(server)
-      .get('/')
-      .expect(404, done);
-    });
-
     it('should support index.html', function(done){
       request(server)
       .get('/users/')
@@ -158,6 +140,53 @@ describe('serveStatic()', function(){
       .expect(200, done)
     });
   });
+
+  describe('redirect', function () {
+    var server;
+    before(function () {
+      server = createServer(fixtures)
+    })
+
+    it('should redirect directories', function(done){
+      request(server)
+      .get('/users')
+      .expect('Location', '/users/')
+      .expect(303, done)
+    })
+
+    it('should include HTML link', function(done){
+      request(server)
+      .get('/users')
+      .expect('Location', '/users/')
+      .expect(303, /<a href="\/users\/">/, done)
+    })
+
+    it('should redirect directories with query string', function (done) {
+      request(server)
+      .get('/users?name=john')
+      .expect('Location', '/users/?name=john')
+      .expect(303, done)
+    })
+
+    it('should not redirect incorrectly', function (done) {
+      request(server)
+      .get('/')
+      .expect(404, done)
+    })
+
+    describe('when false', function () {
+      var server;
+      before(function () {
+        server = createServer(fixtures, {'redirect': false})
+      })
+
+      it('should disable redirect', function (done) {
+        request(server)
+        .get('/users')
+        .expect(404, done)
+      })
+    })
+  })
 
   describe('when traversing passed root', function(){
     var server;

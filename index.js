@@ -69,29 +69,38 @@ exports = module.exports = function(root, options){
     var originalUrl = url.parse(req.originalUrl || req.url);
     var path = parseurl(req).pathname;
 
-    if (path == '/' && originalUrl.pathname[originalUrl.pathname.length - 1] != '/') {
-      return directory();
+    if (path === '/' && originalUrl.pathname[originalUrl.pathname.length - 1] !== '/') {
+      // make sure redirect occurs at mount
+      path = ''
     }
 
-    function directory() {
-      if (!redirect) return next();
-      var target;
-      originalUrl.pathname += '/';
-      target = url.format(originalUrl);
-      res.statusCode = 303;
-      res.setHeader('Location', target);
-      res.end('Redirecting to ' + escapeHtml(target));
+    // create send stream
+    var stream = send(req, path, opts)
+
+    if (redirect) {
+      // redirect relative to originalUrl
+      stream.on('directory', function redirect() {
+        originalUrl.pathname += '/'
+
+        var target = url.format(originalUrl)
+
+        res.statusCode = 303
+        res.setHeader('Content-Type', 'text/html; charset=utf-8')
+        res.setHeader('Location', target)
+        res.end('Redirecting to <a href="' + escapeHtml(target) + '">' + escapeHtml(target) + '</a>\n')
+      })
+    } else {
+      // forward to next middleware on directory
+      stream.on('directory', next)
     }
 
-    function error(err) {
-      if (404 == err.status) return next();
-      next(err);
-    }
+    // forward non-404 errors
+    stream.on('error', function error(err) {
+      next(err.status === 404 ? null : err)
+    })
 
-    send(req, path, opts)
-      .on('error', error)
-      .on('directory', directory)
-      .pipe(res);
+    // pipe
+    stream.pipe(res)
   };
 };
 
