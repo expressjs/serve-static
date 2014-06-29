@@ -59,6 +59,14 @@ exports = module.exports = function(root, options){
   // default redirect
   var redirect = false !== options.redirect;
 
+  // headers listener
+  var setHeaders = options.setHeaders
+  delete options.setHeaders
+
+  if (setHeaders && typeof setHeaders !== 'function') {
+    throw new TypeError('option setHeaders must be function')
+  }
+
   // setup options for send
   options.maxage = options.maxage || options.maxAge || 0;
   options.root = root;
@@ -92,6 +100,11 @@ exports = module.exports = function(root, options){
     } else {
       // forward to next middleware on directory
       stream.on('directory', next)
+    }
+
+    // add headers listener
+    if (setHeaders) {
+      stream.on('headers', setHeaders)
     }
 
     // forward non-404 errors

@@ -30,6 +30,7 @@ Options:
 - `index` Default file name, defaults to `'index.html'`
 - `maxAge` Browser cache maxAge in milliseconds. This can also be a string accepted by the [ms](https://www.npmjs.org/package/ms#readme) module. defaults to `0`
 - `redirect` Redirect to trailing "/" when the pathname is a dir. defaults to `true`
+- `setHeaders` Function to set custom headers on response.
 
 ## Examples
 
@@ -63,6 +64,25 @@ var app = connect()
 
 app.use(serveStatic('public/ftp', {'index': ['default.html', 'default.htm']}))
 app.listen(3000)
+```
+
+### Serve all files as downloads
+
+```js
+var express = require('express')
+var serveStatic = require('serve-static')
+
+var app = express()
+
+app.use(serveStatic('public/ftp', {
+  'index': false,
+  'setHeaders': setHeaders
+}))
+app.listen(3000)
+
+function setHeaders(res, path) {
+  res.attachment(path)
+}
 ```
 
 ## License

@@ -190,6 +190,51 @@ describe('serveStatic()', function(){
     })
   })
 
+  describe('setHeaders', function () {
+    it('should reject non-functions', function () {
+      serveStatic.bind(null, fixtures, {'setHeaders': 3}).should.throw(/setHeaders.*function/)
+    })
+
+    it('should get called when sending file', function(done){
+      var server = createServer(fixtures, {'setHeaders': function (res) {
+        res.setHeader('x-custom', 'set')
+      }})
+
+      request(server)
+      .get('/nums')
+      .expect('x-custom', 'set')
+      .expect(200, done)
+    })
+
+    it('should not get called on 404', function(done){
+      var server = createServer(fixtures, {'setHeaders': function (res) {
+        res.setHeader('x-custom', 'set')
+      }})
+
+      request(server)
+      .get('/bogus')
+      .expect(404, function (err, res) {
+        if (err) return done(err)
+        res.headers.should.not.have.property('x-custom')
+        done()
+      })
+    })
+
+    it('should not get called on redirect', function(done){
+      var server = createServer(fixtures, {'setHeaders': function (res) {
+        res.setHeader('x-custom', 'set')
+      }})
+
+      request(server)
+      .get('/users')
+      .expect(303, function (err, res) {
+        if (err) return done(err)
+        res.headers.should.not.have.property('x-custom')
+        done()
+      })
+    })
+  })
+
   describe('when traversing passed root', function(){
     var server;
     before(function () {
