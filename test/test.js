@@ -128,13 +128,15 @@ describe('serveStatic()', function(){
   })
 
   describe('maxAge', function(){
-    var server;
-    before(function () {
-      server = createServer(fixtures, {'maxAge': Infinity});
-    });
+    it('should accept string', function(done){
+      request(createServer(fixtures, {'maxAge': '30d'}))
+      .get('/todo.txt')
+      .expect('cache-control', 'public, max-age=' + 60*60*24*30)
+      .expect(200, done)
+    })
 
     it('should be reasonable when infinite', function(done){
-      request(server)
+      request(createServer(fixtures, {'maxAge': Infinity}))
       .get('/todo.txt')
       .expect('cache-control', 'public, max-age=' + 60*60*24*365)
       .expect(200, done)

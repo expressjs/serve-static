@@ -28,7 +28,7 @@ Options:
 
 - `hidden` Allow transfer of hidden files. defaults to `false`
 - `index` Default file name, defaults to `'index.html'`
-- `maxAge` Browser cache maxAge in milliseconds. defaults to `0`
+- `maxAge` Browser cache maxAge in milliseconds. This can also be a string accepted by the [ms](https://www.npmjs.org/package/ms#readme) module. defaults to `0`
 - `redirect` Redirect to trailing "/" when the pathname is a dir. defaults to `true`
 
 ## Examples

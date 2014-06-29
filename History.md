@@ -2,6 +2,8 @@ unreleased
 ==========
 
   * Include HTML link in redirect response
+  * deps: send@0.5.0
+    - Accept string for `maxAge` (converted by `ms`)
 
 1.2.3 / 2014-06-11
 ==================
