@@ -17,30 +17,6 @@ var send = require('send');
 var url = require('url');
 
 /**
- * Static:
- *
- *   Static file server with the given `root` path.
- *
- * Examples:
- *
- *     var oneDay = 86400000;
- *     var serveStatic = require('serve-static');
- *
- *     connect()
- *       .use(serveStatic(__dirname + '/public'))
- *
- *     connect()
- *       .use(serveStatic(__dirname + '/public', { maxAge: oneDay }))
- *
- * Options:
- *
- *    - `maxAge`     Browser cache maxAge in milliseconds. defaults to 0
- *    - `hidden`     Allow transfer of hidden files. defaults to false
- *    - `redirect`   Redirect to trailing "/" when the pathname is a dir. defaults to true
- *    - `index`      Default file name, defaults to 'index.html'
- *
- *   Further options are forwarded on to `send`.
- *
  * @param {String} root
  * @param {Object} options
  * @return {Function}
