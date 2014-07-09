@@ -1,5 +1,5 @@
-unreleased
-==========
+1.3.1 / 2014-07-09
+==================
 
   * deps: parseurl@~1.1.3
     - faster parsing of href-only URLs
