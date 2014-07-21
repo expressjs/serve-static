@@ -1,7 +1,16 @@
+unreleased
+==========
+
+  * deps: send@0.7.0
+    - Add `dotfiles` option
+    - deps: debug@1.0.4
+    - deps: depd@0.4.2
+
 1.3.2 / 2014-07-11
 ==================
 
   * deps: send@0.6.0
+    - Cap `maxAge` value to 1 year
     - deps: debug@1.0.3
 
 1.3.1 / 2014-07-09

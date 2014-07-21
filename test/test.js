@@ -117,10 +117,10 @@ describe('serveStatic()', function(){
   describe('hidden files', function(){
     var server;
     before(function () {
-      server = createServer(fixtures, {'hidden': true});
+      server = createServer(fixtures, {'dotfiles': 'allow'});
     });
 
-    it('should be served when hidden: true is given', function(done){
+    it('should be served when dotfiles: "allow" is given', function(done){
       request(server)
       .get('/.hidden')
       .expect(200, 'I am hidden', done);
