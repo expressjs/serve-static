@@ -4,8 +4,6 @@
 [![Build Status](https://travis-ci.org/expressjs/serve-static.svg?branch=master)](https://travis-ci.org/expressjs/serve-static)
 [![Coverage Status](https://img.shields.io/coveralls/expressjs/serve-static.svg?branch=master)](https://coveralls.io/r/expressjs/serve-static)
 
-Previously `connect.static()`.
-
 ## Install
 
 ```sh
@@ -22,15 +20,50 @@ var serveStatic = require('serve-static')
 
 Create a new middleware function to serve files from within a given root
 directory. The file to serve will be determined by combining `req.url`
-with the provided root directory.
+with the provided root directory. When a file is not found, instead of
+sending a 404 response, this module will instead call `next()` to move on
+to the next middleware, allowing for stacking and fall-backs.
 
-Options:
+#### Options
 
-- `hidden` Allow transfer of hidden files. defaults to `false`
-- `index` Default file name, defaults to `'index.html'`
-- `maxAge` Browser cache maxAge in milliseconds. This can also be a string accepted by the [ms](https://www.npmjs.org/package/ms#readme) module. defaults to `0`
-- `redirect` Redirect to trailing "/" when the pathname is a dir. defaults to `true`
-- `setHeaders` Function to set custom headers on response.
+##### dotfiles
+
+ Set how "dotfiles" are treated when encountered. A dotfile is a file
+or directory that begins with a dot ("."). Note this check is done on
+the path itself without checking if the path actually exists on the
+disk. If `root` is specified, only the dotfiles above the root are
+checked (i.e. the root itself can be within a dotfile when when set
+to "deny").
+
+The default value is `'ignore'`.
+
+  - `'allow'` No special treatment for dotfiles.
+  - `'deny'` Send a 403 for any request for a dotfile.
+  - `'ignore'` Pretend like the dotfile does not exist and call `next()`.
+
+##### etag
+
+Enable or disable etag generation, defaults to true.
+
+##### index
+
+By default this module will send "index.html" files in response to a request
+on a directory. To disable this set `false` or to supply a new index pass a
+string or an array in preferred order.
+
+##### maxAge
+
+Provide a max-age in milliseconds for http caching, defaults to 0. This
+can also be a string accepted by the [ms](https://www.npmjs.org/package/ms#readme)
+module.
+
+##### redirect
+
+Redirect to trailing "/" when the pathname is a dir. Defaults to `true`.
+
+##### setHeaders
+
+Function to set custom headers on response.
 
 ## Examples
 
