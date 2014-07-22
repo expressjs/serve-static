@@ -59,7 +59,7 @@ module.
 
 ##### redirect
 
-Redirect to trailing "/" when the pathname is a dir. Defaults to `true`.
+Redirect to trailing "/" when the pathname is a dir. Defaults to `false`.
 
 ##### setHeaders
 
