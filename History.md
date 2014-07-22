@@ -1,6 +1,10 @@
 unreleased
 ==========
 
+  * deps: parseurl@~1.2.0
+    - Cache URLs based on original value
+    - Remove no-longer-needed URL mis-parse work-around
+    - Simplify the "fast-path" `RegExp`
   * deps: send@0.7.0
     - Add `dotfiles` option
     - deps: debug@1.0.4
