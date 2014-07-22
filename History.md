@@ -1,5 +1,5 @@
-unreleased
-==========
+1.4.0 / 2014-07-21
+==================
 
   * deps: parseurl@~1.2.0
     - Cache URLs based on original value
