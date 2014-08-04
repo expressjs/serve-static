@@ -1,3 +1,9 @@
+unreleased
+==========
+
+  * deps: send@0.7.4
+    - Fix serving index files without root dir
+
 1.4.3 / 2014-07-29
 ==================
 
