@@ -1,5 +1,5 @@
-unreleased
-==========
+1.5.0 / 2014-08-05
+==================
 
   * deps: send@0.8.1
     - Add `extensions` option
