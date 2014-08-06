@@ -46,6 +46,14 @@ The default value is `'ignore'`.
 
 Enable or disable etag generation, defaults to true.
 
+##### extensions
+
+Set file extension fallbacks. When set, if a file is not found, the given
+extensions will be added to the file name and search for. The first that
+exists will be served. Example: `['html', 'htm']`.
+
+The default value is `false`.
+
 ##### index
 
 By default this module will send "index.html" files in response to a request

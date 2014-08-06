@@ -114,6 +114,48 @@ describe('serveStatic()', function(){
     })
   })
 
+  describe('extensions', function () {
+    it('should be not be enabled by default', function (done) {
+      var server = createServer(fixtures);
+
+      request(server)
+      .get('/todo')
+      .expect(404, done);
+    })
+
+    it('should be configurable', function (done) {
+      var server = createServer(fixtures, {'extensions': 'txt'});
+
+      request(server)
+      .get('/todo')
+      .expect(200, '- groceries', done);
+    })
+
+    it('should support disabling extensions', function (done) {
+      var server = createServer(fixtures, {'extensions': false});
+
+      request(server)
+      .get('/todo')
+      .expect(404, done);
+    })
+
+    it('should support fallbacks', function (done) {
+      var server = createServer(fixtures, {'extensions': ['htm', 'html', 'txt']});
+
+      request(server)
+      .get('/todo')
+      .expect(200, '<li>groceries</li>', done);
+    })
+
+    it('should 404 if nothing found', function (done) {
+      var server = createServer(fixtures, {'extensions': ['htm', 'html', 'txt']});
+
+      request(server)
+      .get('/bob')
+      .expect(404, done)
+    })
+  })
+
   describe('hidden files', function(){
     var server;
     before(function () {
