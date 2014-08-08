@@ -11,8 +11,6 @@
  */
 
 var escapeHtml = require('escape-html');
-var parseurl = require('parseurl');
-var resolve = require('path').resolve;
 var send = require('send');
 var url = require('url');
 
@@ -24,23 +22,21 @@ var url = require('url');
  */
 
 exports = module.exports = function(root, options){
-  options = extend({}, options);
 
   // root required
   if (!root) throw new TypeError('root path required');
 
-  // resolve root to absolute
-  root = resolve(root);
-
+  var options = extend({}, options);
+  
   // default redirect
   var redirect = false !== options.redirect;
 
   // headers listener
-  var setHeaders = options.setHeaders
-  delete options.setHeaders
+  var setHeaders = options.setHeaders;
+  delete options.setHeaders;
 
   if (setHeaders && typeof setHeaders !== 'function') {
-    throw new TypeError('option setHeaders must be function')
+    throw new TypeError('option setHeaders must be function');
   }
 
   // setup options for send
@@ -48,48 +44,50 @@ exports = module.exports = function(root, options){
   options.root = root;
 
   return function staticMiddleware(req, res, next) {
+
     if ('GET' != req.method && 'HEAD' != req.method) return next();
     var opts = extend({}, options);
-    var originalUrl = url.parse(req.originalUrl || req.url);
-    var path = parseurl(req).pathname;
-
+    var path = url.parse(req.url);
+    var originalUrl = req.originalUrl != null ? url.parse(req.originalUrl) : path;
+    path = path.pathname || path.href;
+    
     if (path === '/' && originalUrl.pathname[originalUrl.pathname.length - 1] !== '/') {
       // make sure redirect occurs at mount
-      path = ''
+      path = '';
     }
 
     // create send stream
-    var stream = send(req, path, opts)
+    var stream = send(req, path, opts);
 
     if (redirect) {
       // redirect relative to originalUrl
       stream.on('directory', function redirect() {
-        originalUrl.pathname += '/'
+        originalUrl.pathname += '/';
 
-        var target = url.format(originalUrl)
+        var target = url.format(originalUrl);
 
-        res.statusCode = 303
-        res.setHeader('Content-Type', 'text/html; charset=utf-8')
-        res.setHeader('Location', target)
-        res.end('Redirecting to <a href="' + escapeHtml(target) + '">' + escapeHtml(target) + '</a>\n')
-      })
+        res.statusCode = 303;
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.setHeader('Location', target);
+        res.end('Redirecting to <a href="' + escapeHtml(target) + '">' + escapeHtml(target) + '</a>\n');
+      });
     } else {
       // forward to next middleware on directory
-      stream.on('directory', next)
+      stream.on('directory', next);
     }
 
     // add headers listener
     if (setHeaders) {
-      stream.on('headers', setHeaders)
+      stream.on('headers', setHeaders);
     }
 
     // forward non-404 errors
     stream.on('error', function error(err) {
-      next(err.status === 404 ? null : err)
-    })
+      next(err.status === 404 ? null : err);
+    });
 
     // pipe
-    stream.pipe(res)
+    stream.pipe(res);
   };
 };
 
@@ -119,4 +117,4 @@ function extend(obj, source) {
   }
 
   return obj;
-};
+}
