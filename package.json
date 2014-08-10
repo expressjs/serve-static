@@ -8,7 +8,8 @@
   "dependencies": {
     "escape-html": "1.0.1",
     "parseurl": "~1.3.0",
-    "send": "0.8.1"
+    "send": "0.8.1",
+    "utils-merge": "1.0.0"
   },
   "devDependencies": {
     "istanbul": "0.3.0",

@@ -11,6 +11,7 @@
  */
 
 var escapeHtml = require('escape-html');
+var merge = require('utils-merge');
 var parseurl = require('parseurl');
 var resolve = require('path').resolve;
 var send = require('send');
@@ -24,10 +25,11 @@ var url = require('url');
  */
 
 exports = module.exports = function(root, options){
-  options = extend({}, options);
-
   // root required
   if (!root) throw new TypeError('root path required');
+
+  // copy options object
+  options = merge({}, options)
 
   // resolve root to absolute
   root = resolve(root);
@@ -49,7 +51,8 @@ exports = module.exports = function(root, options){
 
   return function staticMiddleware(req, res, next) {
     if ('GET' != req.method && 'HEAD' != req.method) return next();
-    var opts = extend({}, options);
+
+    var opts = merge({}, options)
     var originalUrl = parseurl.original(req);
     var path = parseurl(req).pathname;
 
@@ -101,22 +104,3 @@ exports = module.exports = function(root, options){
  */
 
 exports.mime = send.mime;
-
-/**
- * Shallow clone a single object.
- *
- * @param {Object} obj
- * @param {Object} source
- * @return {Object}
- * @api private
- */
-
-function extend(obj, source) {
-  if (!source) return obj;
-
-  for (var prop in source) {
-    obj[prop] = source[prop];
-  }
-
-  return obj;
-};
