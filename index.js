@@ -50,7 +50,7 @@ exports = module.exports = function(root, options){
   return function staticMiddleware(req, res, next) {
     if ('GET' != req.method && 'HEAD' != req.method) return next();
     var opts = extend({}, options);
-    var originalUrl = url.parse(req.originalUrl || req.url);
+    var originalUrl = parseurl.original(req);
     var path = parseurl(req).pathname;
 
     if (path === '/' && originalUrl.pathname[originalUrl.pathname.length - 1] !== '/') {

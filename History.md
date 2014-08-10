@@ -1,3 +1,9 @@
+unreleased
+==========
+
+  * Fix parsing of weird `req.originalUrl` values
+  * deps: parseurl@~1.3.0
+
 1.5.0 / 2014-08-05
 ==================
 

@@ -471,7 +471,7 @@ describe('serveStatic()', function(){
     before(function () {
       server = createServer(fixtures, null, function (req) {
         req.originalUrl = req.url;
-        req.url = '/' + req.url.split('/').slice(2).join('/');
+        req.url = '/' + req.url.split('/').slice(3).join('/');
       });
     });
 
@@ -479,6 +479,13 @@ describe('serveStatic()', function(){
       request(server)
       .get('/static/users')
       .expect('Location', '/static/users/')
+      .expect(303, done);
+    });
+
+    it('should not choke on auth-looking URL', function(done){
+      request(server)
+      .get('//todo@txt')
+      .expect('Location', '//todo@txt/')
       .expect(303, done);
     });
   });
