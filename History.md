@@ -1,3 +1,9 @@
+unreleased
+==========
+
+  * deps: send@0.8.2
+    - Work around `fd` leak in Node.js 0.10 for `fs.ReadStream`
+
 1.5.1 / 2014-08-09
 ==================
 
