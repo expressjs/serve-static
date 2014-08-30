@@ -24,18 +24,19 @@ var url = require('url');
  * @api public
  */
 
-exports = module.exports = function(root, options){
-  // root required
-  if (!root) throw new TypeError('root path required');
+exports = module.exports = function serveStatic(root, options) {
+  if (!root) {
+    throw new TypeError('root path required')
+  }
 
   // copy options object
   options = merge({}, options)
 
   // resolve root to absolute
-  root = resolve(root);
+  root = resolve(root)
 
   // default redirect
-  var redirect = false !== options.redirect;
+  var redirect = options.redirect !== false
 
   // headers listener
   var setHeaders = options.setHeaders
@@ -46,15 +47,17 @@ exports = module.exports = function(root, options){
   }
 
   // setup options for send
-  options.maxage = options.maxage || options.maxAge || 0;
-  options.root = root;
+  options.maxage = options.maxage || options.maxAge || 0
+  options.root = root
 
-  return function staticMiddleware(req, res, next) {
-    if ('GET' != req.method && 'HEAD' != req.method) return next();
+  return function serveStatic(req, res, next) {
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+      return next()
+    }
 
     var opts = merge({}, options)
-    var originalUrl = parseurl.original(req);
-    var path = parseurl(req).pathname;
+    var originalUrl = parseurl.original(req)
+    var path = parseurl(req).pathname
 
     if (path === '/' && originalUrl.pathname[originalUrl.pathname.length - 1] !== '/') {
       // make sure redirect occurs at mount
@@ -93,8 +96,8 @@ exports = module.exports = function(root, options){
 
     // pipe
     stream.pipe(res)
-  };
-};
+  }
+}
 
 /**
  * Expose mime module.
@@ -103,4 +106,4 @@ exports = module.exports = function(root, options){
  * reference to the "mime" module in the npm registry.
  */
 
-exports.mime = send.mime;
+exports.mime = send.mime
