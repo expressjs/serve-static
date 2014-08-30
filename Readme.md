@@ -1,9 +1,10 @@
 # serve-static
 
-[![NPM version](https://badge.fury.io/js/serve-static.svg)](http://badge.fury.io/js/serve-static)
-[![Build Status](https://travis-ci.org/expressjs/serve-static.svg?branch=master)](https://travis-ci.org/expressjs/serve-static)
-[![Coverage Status](https://img.shields.io/coveralls/expressjs/serve-static.svg?branch=master)](https://coveralls.io/r/expressjs/serve-static)
-[![Gittip](http://img.shields.io/gittip/dougwilson.svg)](https://www.gittip.com/dougwilson/)
+[![NPM Version][npm-image]][npm-url]
+[![NPM Downloads][downloads-image]][downloads-url]
+[![Build Status][travis-image]][travis-url]
+[![Test Coverage][coveralls-image]][coveralls-url]
+[![Gratipay][gratipay-image]][gratipay-url]
 
 ## Install
 
@@ -150,3 +151,14 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+[npm-image]: https://img.shields.io/npm/v/serve-static.svg?style=flat
+[npm-url]: https://npmjs.org/package/serve-static
+[travis-image]: https://img.shields.io/travis/expressjs/serve-static.svg?style=flat
+[travis-url]: https://travis-ci.org/expressjs/serve-static
+[coveralls-image]: https://img.shields.io/coveralls/expressjs/serve-static.svg?style=flat
+[coveralls-url]: https://coveralls.io/r/expressjs/serve-static
+[downloads-image]: https://img.shields.io/npm/dm/serve-static.svg?style=flat
+[downloads-url]: https://npmjs.org/package/serve-static
+[gratipay-image]: https://img.shields.io/gratipay/dougwilson.svg?style=flat
+[gratipay-url]: https://gratipay.com/dougwilson/
