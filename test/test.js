@@ -78,6 +78,12 @@ describe('serveStatic()', function(){
       .expect(200, '', done);
     });
 
+    it('should skip POST requests', function(done){
+      request(server)
+      .post('/todo.txt')
+      .expect(404, 'sorry!', done);
+    });
+
     it('should support conditional requests', function(done){
       request(server)
       .get('/todo.txt')
