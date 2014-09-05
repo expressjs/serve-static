@@ -1,3 +1,10 @@
+unreleased
+==========
+
+  * deps: send@0.8.5
+    - Fix a path traversal issue when using `root`
+    - Fix malicious path detection for empty string path
+
 1.5.3 / 2014-08-17
 ==================
 
