@@ -16,6 +16,10 @@ describe('serveStatic()', function(){
       server = createServer();
     });
 
+    it('should require root path', function(){
+      serveStatic.bind().should.throw(/root path required/);
+    });
+
     it('should serve static files', function(done){
       request(server)
       .get('/todo.txt')
