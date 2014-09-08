@@ -39,6 +39,13 @@ describe('serveStatic()', function(){
       .expect(200, done);
     });
 
+    it('should set Last-Modified', function(done){
+      request(server)
+      .get('/todo.txt')
+      .expect('Last-Modified', /\d{2} \w{3} \d{4}/)
+      .expect(200, done)
+    })
+
     it('should default max-age=0', function(done){
       request(server)
       .get('/todo.txt')
@@ -176,6 +183,32 @@ describe('serveStatic()', function(){
       request(server)
       .get('/.hidden')
       .expect(200, 'I am hidden', done);
+    })
+  })
+
+  describe('lastModified', function(){
+    describe('when false', function () {
+      it('should not include Last-Modifed', function (done) {
+        request(createServer(fixtures, {'lastModified': false}))
+        .get('/nums')
+        .expect(200, '123456789', function (err, res) {
+          if (err) return done(err)
+          res.headers.should.not.have.property('last-modified')
+          done()
+        })
+      })
+    })
+
+    describe('when true', function () {
+      it('should include Last-Modifed', function (done) {
+        request(createServer(fixtures, {'lastModified': true}))
+        .get('/nums')
+        .expect(200, '123456789', function (err, res) {
+          if (err) return done(err)
+          res.headers.should.have.property('last-modified')
+          done()
+        })
+      })
     })
   })
 

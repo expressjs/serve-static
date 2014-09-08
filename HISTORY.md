@@ -1,3 +1,11 @@
+unreleased
+==========
+
+  * deps: send@0.9.0
+    - Add `lastMofified` option
+    - Use `etag` to generate `ETag` header
+    - deps: debug@~2.0.0
+
 1.5.4 / 2014-09-04
 ==================
 

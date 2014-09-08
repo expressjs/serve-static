@@ -61,6 +61,11 @@ By default this module will send "index.html" files in response to a request
 on a directory. To disable this set `false` or to supply a new index pass a
 string or an array in preferred order.
 
+##### lastMofified
+
+Enable or disable `Last-Modified` header, defaults to true. Uses the file
+system's last modified value.
+
 ##### maxAge
 
 Provide a max-age in milliseconds for http caching, defaults to 0. This
