@@ -1,5 +1,5 @@
-unreleased
-==========
+1.6.0 / 2014-09-07
+==================
 
   * deps: send@0.9.0
     - Add `lastMofified` option
