@@ -29,6 +29,10 @@ exports = module.exports = function serveStatic(root, options) {
     throw new TypeError('root path required')
   }
 
+  if (typeof root !== 'string') {
+    throw new TypeError('root path must be a string')
+  }
+
   // copy options object
   options = merge({}, options)
 

@@ -20,6 +20,10 @@ describe('serveStatic()', function(){
       serveStatic.bind().should.throw(/root path required/);
     });
 
+    it('should require root path to be string', function(){
+      serveStatic.bind(null, 42).should.throw(/root path.*string/);
+    });
+
     it('should serve static files', function(done){
       request(server)
       .get('/todo.txt')
