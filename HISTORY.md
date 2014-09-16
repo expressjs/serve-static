@@ -1,3 +1,11 @@
+unreleased
+==========
+
+  * deps: send@0.9.2
+    - deps: depd@0.4.5
+    - deps: etag@~1.3.1
+    - deps: range-parser@~1.0.2
+
 1.6.1 / 2014-09-07
 ==================
 
