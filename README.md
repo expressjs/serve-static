@@ -102,7 +102,36 @@ var server = http.createServer(function(req, res){
 server.listen(3000)
 ```
 
-### Serve all files from ftp folder
+### Serve all files as downloads
+
+```js
+var contentDisposition = require('content-disposition')
+var finalhandler = require('finalhandler')
+var http = require('http')
+var serveStatic = require('serve-static')
+
+// Serve up public/ftp folder
+app.use(serveStatic('public/ftp', {
+  'index': false,
+  'setHeaders': setHeaders
+}))
+
+// Set header to force download
+function setHeaders(res, path) {
+  res.setHeader('Content-Disposition', contentDisposition(path))
+}
+
+// Create server
+var server = http.createServer(function(req, res){
+  var done = finalhandler(req, res)
+  serve(req, res, done)
+})
+
+// Listen
+server.listen(3000)
+```
+
+### Serving using express
 
 ```js
 var connect = require('connect')
@@ -112,25 +141,6 @@ var app = connect()
 
 app.use(serveStatic('public/ftp', {'index': ['default.html', 'default.htm']}))
 app.listen(3000)
-```
-
-### Serve all files as downloads
-
-```js
-var express = require('express')
-var serveStatic = require('serve-static')
-
-var app = express()
-
-app.use(serveStatic('public/ftp', {
-  'index': false,
-  'setHeaders': setHeaders
-}))
-app.listen(3000)
-
-function setHeaders(res, path) {
-  res.attachment(path)
-}
 ```
 
 ## License
