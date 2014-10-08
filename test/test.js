@@ -559,6 +559,43 @@ describe('serveStatic()', function(){
       });
     });
   });
+
+  describe('when index file serving disabled', function(){
+    var server;
+    before(function () {
+      server = createServer(fixtures, {'index': false}, function (req) {
+        // mimic express/connect mount
+        req.originalUrl = req.url;
+        req.url = '/' + req.url.split('/').slice(2).join('/');
+      });
+    });
+
+    it('should next() on directory', function (done) {
+      request(server)
+      .get('/static/users/')
+      .expect(404, 'sorry!', done);
+    });
+
+    it('should redirect to trailing slash', function (done) {
+      request(server)
+      .get('/static/users')
+      .expect('Location', '/static/users/')
+      .expect(303, done);
+    });
+
+    it('should next() on mount point', function (done) {
+      request(server)
+      .get('/static/')
+      .expect(404, 'sorry!', done);
+    });
+
+    it('should redirect to trailing slash mount point', function (done) {
+      request(server)
+      .get('/static')
+      .expect('Location', '/static/')
+      .expect(303, done);
+    });
+  });
 });
 
 function createServer(dir, opts, fn) {

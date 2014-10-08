@@ -62,8 +62,9 @@ exports = module.exports = function serveStatic(root, options) {
     var opts = merge({}, options)
     var originalUrl = parseurl.original(req)
     var path = parseurl(req).pathname
+    var hasTrailingSlash = originalUrl.pathname[originalUrl.pathname.length - 1] === '/'
 
-    if (path === '/' && originalUrl.pathname[originalUrl.pathname.length - 1] !== '/') {
+    if (path === '/' && !hasTrailingSlash) {
       // make sure redirect occurs at mount
       path = ''
     }
@@ -74,6 +75,10 @@ exports = module.exports = function serveStatic(root, options) {
     if (redirect) {
       // redirect relative to originalUrl
       stream.on('directory', function redirect() {
+        if (hasTrailingSlash) {
+          return next()
+        }
+
         originalUrl.pathname += '/'
 
         var target = url.format(originalUrl)
