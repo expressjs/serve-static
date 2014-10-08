@@ -559,6 +559,28 @@ describe('serveStatic()', function(){
       });
     });
   });
+
+  describe('when index is set to false', function(){
+    var server;
+    before(function () {
+      server = createServer('test/fixtures/', {index:false}, function (req) {
+        req.originalUrl = req.url;
+        req.url = '/' + req.url.split('/').slice(2).join('/');
+      });
+    });
+
+    it('should not redirect if url points to root directory', function (done) {
+      request(server)
+        .get('/')
+        .expect(403, done);
+    });
+
+    it('should ignore urls that point to a subdirectory', function (done) {
+      request(server)
+        .get('/users/')
+        .expect(404, done);
+    });
+  });
 });
 
 function createServer(dir, opts, fn) {
