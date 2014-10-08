@@ -74,6 +74,17 @@ exports = module.exports = function serveStatic(root, options) {
     if (redirect) {
       // redirect relative to originalUrl
       stream.on('directory', function redirect() {
+        // make sure we don't create a redirect loop
+        if(originalUrl.pathname[originalUrl.pathname.length-1]==='/'){
+          // is root directory
+          if(originalUrl.pathname===path){
+            // accessing the root is forbidden
+            return stream.error(403)
+          }else{
+            // accessing a sub dir should be forwarded to next middleware
+            return stream.error(404)
+          }
+        }
         originalUrl.pathname += '/'
 
         var target = url.format(originalUrl)
