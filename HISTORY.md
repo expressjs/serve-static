@@ -1,5 +1,5 @@
-unreleased
-==========
+1.6.4 / 2014-10-08
+==================
 
   * Fix redirect loop when index file serving disabled
 
