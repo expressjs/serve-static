@@ -42,6 +42,9 @@ exports = module.exports = function serveStatic(root, options) {
   // default redirect
   var redirect = options.redirect !== false
 
+  // access to folder
+  var access = typeof options.access==='undefined'||options.access===true?true:false;
+
   // headers listener
   var setHeaders = options.setHeaders
   delete options.setHeaders
@@ -55,7 +58,7 @@ exports = module.exports = function serveStatic(root, options) {
   options.root = root
 
   return function serveStatic(req, res, next) {
-    if (req.method !== 'GET' && req.method !== 'HEAD') {
+    if (!access || (req.method !== 'GET' && req.method !== 'HEAD') ) {
       return next()
     }
 
