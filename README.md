@@ -111,10 +111,10 @@ var http = require('http')
 var serveStatic = require('serve-static')
 
 // Serve up public/ftp folder
-app.use(serveStatic('public/ftp', {
+var serve = serveStatic('public/ftp', {
   'index': false,
   'setHeaders': setHeaders
-}))
+})
 
 // Set header to force download
 function setHeaders(res, path) {
