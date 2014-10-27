@@ -78,7 +78,13 @@ Redirect to trailing "/" when the pathname is a dir. Defaults to `true`.
 
 ##### setHeaders
 
-Function to set custom headers on response.
+Function to set custom headers on response. Alterations to the headers need to
+occur synchronously. The function is called as `fn(res, path, stat)`, where
+the arguments are:
+
+  - `res` the response object
+  - `path` the file path that is being sent
+  - `stat` the stat object of the file that is being sent
 
 ## Examples
 
