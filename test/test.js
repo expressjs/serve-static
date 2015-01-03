@@ -1,4 +1,5 @@
 
+var assert = require('assert');
 var http = require('http');
 var path = require('path');
 var request = require('supertest');
@@ -17,11 +18,11 @@ describe('serveStatic()', function(){
     });
 
     it('should require root path', function(){
-      serveStatic.bind().should.throw(/root path required/);
+      assert.throws(serveStatic.bind(), /root path required/);
     });
 
     it('should require root path to be string', function(){
-      serveStatic.bind(null, 42).should.throw(/root path.*string/);
+      assert.throws(serveStatic.bind(null, 42), /root path.*string/);
     });
 
     it('should serve static files', function(done){
@@ -195,11 +196,8 @@ describe('serveStatic()', function(){
       it('should not include Last-Modifed', function (done) {
         request(createServer(fixtures, {'lastModified': false}))
         .get('/nums')
-        .expect(200, '123456789', function (err, res) {
-          if (err) return done(err)
-          res.headers.should.not.have.property('last-modified')
-          done()
-        })
+        .expect(shouldNotHaveHeader('Last-Modified'))
+        .expect(200, '123456789', done)
       })
     })
 
@@ -207,11 +205,8 @@ describe('serveStatic()', function(){
       it('should include Last-Modifed', function (done) {
         request(createServer(fixtures, {'lastModified': true}))
         .get('/nums')
-        .expect(200, '123456789', function (err, res) {
-          if (err) return done(err)
-          res.headers.should.have.property('last-modified')
-          done()
-        })
+        .expect('Last-Modified',  /^\w{3}, \d+ \w+ \d+ \d+:\d+:\d+ \w+$/)
+        .expect(200, '123456789', done)
       })
     })
   })
@@ -288,7 +283,7 @@ describe('serveStatic()', function(){
 
   describe('setHeaders', function () {
     it('should reject non-functions', function () {
-      serveStatic.bind(null, fixtures, {'setHeaders': 3}).should.throw(/setHeaders.*function/)
+      assert.throws(serveStatic.bind(null, fixtures, {'setHeaders': 3}), /setHeaders.*function/)
     })
 
     it('should get called when sending file', function(done){
@@ -309,11 +304,8 @@ describe('serveStatic()', function(){
 
       request(server)
       .get('/bogus')
-      .expect(404, function (err, res) {
-        if (err) return done(err)
-        res.headers.should.not.have.property('x-custom')
-        done()
-      })
+      .expect(shouldNotHaveHeader('x-custom'))
+      .expect(404, done)
     })
 
     it('should not get called on redirect', function(done){
@@ -323,11 +315,8 @@ describe('serveStatic()', function(){
 
       request(server)
       .get('/users')
-      .expect(303, function (err, res) {
-        if (err) return done(err)
-        res.headers.should.not.have.property('x-custom')
-        done()
-      })
+      .expect(shouldNotHaveHeader('x-custom'))
+      .expect(303, done)
     })
   })
 
@@ -617,4 +606,10 @@ function createServer(dir, opts, fn) {
       res.end(err ? err.stack : 'sorry!');
     });
   });
+}
+
+function shouldNotHaveHeader(header) {
+  return function (res) {
+    assert.ok(!(header.toLowerCase() in res.headers), 'should not have header ' + header)
+  }
 }
