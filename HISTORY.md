@@ -1,3 +1,8 @@
+unreleased
+==========
+
+  * Fix potential open redirect when mounted at root
+
 1.7.1 / 2014-10-22
 ==================
 
