@@ -79,10 +79,13 @@ exports = module.exports = function serveStatic(root, options) {
           return next()
         }
 
-        originalUrl.pathname += '/'
+        // append trailing slash
+        originalUrl.pathname = collapseLeadingSlashes(originalUrl.pathname + '/')
 
+        // reformat the URL
         var target = url.format(originalUrl)
 
+        // send redirect response
         res.statusCode = 303
         res.setHeader('Content-Type', 'text/html; charset=utf-8')
         res.setHeader('Location', target)
@@ -116,3 +119,19 @@ exports = module.exports = function serveStatic(root, options) {
  */
 
 exports.mime = send.mime
+
+/**
+ * Collapse all leading slashes into a single slash
+ * @private
+ */
+function collapseLeadingSlashes(str) {
+  for (var i = 0; i < str.length; i++) {
+    if (str[i] !== '/') {
+      break
+    }
+  }
+
+  return i > 1
+    ? '/' + str.substr(i)
+    : str
+}

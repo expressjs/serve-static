@@ -259,6 +259,13 @@ describe('serveStatic()', function(){
       .expect(303, done)
     })
 
+    it('should not redirect to protocol-relative locations', function (done) {
+      request(server)
+      .get('//users')
+      .expect('Location', '/users/')
+      .expect(303, done)
+    })
+
     it('should not redirect incorrectly', function (done) {
       request(server)
       .get('/')
@@ -532,7 +539,7 @@ describe('serveStatic()', function(){
     it('should not choke on auth-looking URL', function(done){
       request(server)
       .get('//todo@txt')
-      .expect('Location', '//todo@txt/')
+      .expect('Location', '/todo@txt/')
       .expect(303, done);
     });
   });

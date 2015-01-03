@@ -1,3 +1,9 @@
+unreleased
+==========
+
+  * Fix potential open redirect when mounted at root
+    - Back-ported from v1.7.2
+
 1.6.4 / 2014-10-08
 ==================
 
