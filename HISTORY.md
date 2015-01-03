@@ -1,5 +1,5 @@
-unreleased
-==========
+1.7.2 / 2015-01-02
+==================
 
   * Fix potential open redirect when mounted at root
 
