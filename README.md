@@ -34,7 +34,7 @@ to the next middleware, allowing for stacking and fall-backs.
 or directory that begins with a dot ("."). Note this check is done on
 the path itself without checking if the path actually exists on the
 disk. If `root` is specified, only the dotfiles above the root are
-checked (i.e. the root itself can be within a dotfile when when set
+checked (i.e. the root itself can be within a dotfile when set
 to "deny").
 
 The default value is `'ignore'`.
