@@ -80,6 +80,7 @@ exports = module.exports = function serveStatic(root, options) {
         }
 
         // append trailing slash
+        originalUrl.path = null
         originalUrl.pathname = collapseLeadingSlashes(originalUrl.pathname + '/')
 
         // reformat the URL

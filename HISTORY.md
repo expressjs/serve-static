@@ -1,3 +1,8 @@
+unreleased
+==========
+
+  * Fix redirect loop in Node.js 0.11.14
+
 1.8.0 / 2015-01-05
 ==================
 
