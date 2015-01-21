@@ -2,6 +2,8 @@ unreleased
 ==========
 
   * Fix redirect loop in Node.js 0.11.14
+  * deps: send@0.11.1
+    - Fix root path disclosure
 
 1.8.0 / 2015-01-05
 ==================

@@ -320,7 +320,7 @@ describe('serveStatic()', function(){
     })
   })
 
-  describe('when traversing passed root', function(){
+  describe('when traversing past root', function(){
     var server;
     before(function () {
       server = createServer();
@@ -336,7 +336,13 @@ describe('serveStatic()', function(){
       request(server)
       .get('/users/%2e%2e/%2e%2e/todo.txt')
       .expect(403, done);
-    });
+    })
+
+    it('should not allow root path disclosure', function (done) {
+      request(server)
+      .get('/users/../../fixtures/todo.txt')
+      .expect(403, done);
+    })
   });
 
   describe('on ENOENT', function(){
