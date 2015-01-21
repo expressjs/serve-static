@@ -1,5 +1,5 @@
-unreleased
-==========
+1.8.1 / 2015-01-20
+==================
 
   * Fix redirect loop in Node.js 0.11.14
   * deps: send@0.11.1
