@@ -141,7 +141,7 @@ server.listen(3000)
 ### Serving using express
 
 ```js
-var connect = require('connect')
+var express = require('express')
 var serveStatic = require('serve-static')
 
 var app = connect()
