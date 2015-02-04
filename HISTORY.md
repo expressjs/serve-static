@@ -1,5 +1,5 @@
-unreleased
-==========
+1.6.5 / 2015-02-04
+==================
 
   * Fix potential open redirect when mounted at root
     - Back-ported from v1.7.2
