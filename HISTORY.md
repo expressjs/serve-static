@@ -33,6 +33,12 @@
     - deps: depd@~1.0.0
     - deps: etag@~1.5.0
 
+1.6.5 / 2015-02-04
+==================
+
+  * Fix potential open redirect when mounted at root
+    - Back-ported from v1.7.2
+
 1.6.4 / 2014-10-08
 ==================
 
