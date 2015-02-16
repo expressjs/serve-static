@@ -8,7 +8,7 @@
   "dependencies": {
     "escape-html": "1.0.1",
     "parseurl": "~1.3.0",
-    "send": "0.11.1",
+    "send": "0.12.0",
     "utils-merge": "1.0.0"
   },
   "devDependencies": {

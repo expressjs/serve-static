@@ -1,3 +1,11 @@
+unreleased
+==========
+
+  * deps: send@0.12.0
+    - Always read the stat size from the file
+    - Fix mutating passed-in `options`
+    - deps: mime@1.3.4
+
 1.8.1 / 2015-01-20
 ==================
 
