@@ -31,6 +31,12 @@ describe('serveStatic()', function(){
       .expect(200, '- groceries', done);
     });
 
+    it('should serve empty static files', function(done){
+      request(server)
+          .get('/empty')
+          .expect(200, '', done);
+    });
+
     it('should support nesting', function(done){
       request(server)
       .get('/users/tobi.txt')
