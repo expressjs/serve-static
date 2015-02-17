@@ -108,6 +108,12 @@ describe('serveStatic()', function(){
       });
     });
 
+    it('should serve zero-length files', function (done) {
+      request(server)
+      .get('/empty.txt')
+      .expect(200, '', done)
+    })
+
     it('should ignore hidden files', function(done){
       request(server)
       .get('/.hidden')

@@ -1,3 +1,9 @@
+unreleased
+==========
+
+  * deps: send@0.12.1
+    - Fix regression sending zero-length files
+
 1.9.0 / 2015-02-16
 ==================
 
