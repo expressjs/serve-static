@@ -171,6 +171,33 @@ app.use(serveStatic(__dirname + '/public'))
 app.listen(3000)
 ```
 
+#### Different settings for paths
+
+This example shows how to set a different max age depending on the served
+file type. In this example, HTML files are not cached, while everything else
+is for 1 day.
+
+```js
+var express = require('express')
+var serveStatic = require('serve-static')
+
+var app = express()
+
+app.use(serveStatic(__dirname + '/public', {
+  maxAge: '1d',
+  setHeaders: setCustomCacheControl
+}))
+
+app.listen(3000)
+
+function setCustomCacheControl(res, path) {
+  if (serveStatic.mime.lookup(path) === 'text/html') {
+    // Custom Cache-Control for HTML files
+    res.setHeader('Cache-Control', 'public, max-age=0')
+  }
+}
+```
+
 ## License
 
 [MIT](LICENSE)
