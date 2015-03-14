@@ -140,6 +140,10 @@ server.listen(3000)
 
 ### Serving using express
 
+#### Simple
+
+This is a simple example of using Express.
+
 ```js
 var express = require('express')
 var serveStatic = require('serve-static')
@@ -147,6 +151,23 @@ var serveStatic = require('serve-static')
 var app = express()
 
 app.use(serveStatic('public/ftp', {'index': ['default.html', 'default.htm']}))
+app.listen(3000)
+```
+
+#### Multiple roots
+
+This example shows a simple way to search through multiple directories.
+Files are look for in `public-optimized/` first, then `public/` second as
+a fallback.
+
+```js
+var express = require('express')
+var serveStatic = require('serve-static')
+
+var app = express()
+
+app.use(serveStatic(__dirname + '/public-optimized'))
+app.use(serveStatic(__dirname + '/public'))
 app.listen(3000)
 ```
 
