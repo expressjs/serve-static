@@ -1,5 +1,5 @@
-unreleased
-==========
+1.9.2 / 2015-03-14
+==================
 
   * deps: send@0.12.2
     - Throw errors early for invalid `extensions` or `index` options
