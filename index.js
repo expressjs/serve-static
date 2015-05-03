@@ -55,6 +55,11 @@ exports = module.exports = function serveStatic(root, options) {
   options.root = root
 
   return function serveStatic(req, res, next) {
+    next = next || function() {
+      res.statusCode = 404;
+      res.end('Not found');
+    }
+    
     if (req.method !== 'GET' && req.method !== 'HEAD') {
       return next()
     }
