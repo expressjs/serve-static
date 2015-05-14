@@ -449,7 +449,8 @@ describe('serveStatic()', function(){
         request(server)
         .get('/nums')
         .set('Range', 'bytes=9-50')
-        .expect('Content-Range', 'bytes */9', done)
+        .expect('Content-Range', 'bytes */9')
+        .expect(416, done);
       });
     });
 
