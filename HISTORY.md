@@ -1,3 +1,13 @@
+unreleased
+==========
+
+  * deps: send@0.12.3
+    - deps: debug@~2.2.0
+    - deps: depd@~1.0.1
+    - deps: etag@~1.6.0
+    - deps: ms@0.7.1
+    - deps: on-finished@~2.2.1
+
 1.9.2 / 2015-03-14
 ==================
 
