@@ -15,6 +15,7 @@ unreleased
     - deps: on-finished@~2.3.0
     - perf: enable strict mode
     - perf: remove unnecessary array allocations
+  * perf: enable strict mode
 
 1.9.3 / 2015-05-14
 ==================
