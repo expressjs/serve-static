@@ -14,7 +14,6 @@
  */
 
 var escapeHtml = require('escape-html');
-var merge = require('utils-merge');
 var parseurl = require('parseurl');
 var resolve = require('path').resolve;
 var send = require('send');
@@ -45,32 +44,31 @@ function serveStatic(root, options) {
   }
 
   // copy options object
-  options = merge({}, options)
+  var opts = Object.create(options || null)
 
   // resolve root to absolute
   root = resolve(root)
 
   // default redirect
-  var redirect = options.redirect !== false
+  var redirect = opts.redirect !== false
 
   // headers listener
-  var setHeaders = options.setHeaders
-  delete options.setHeaders
+  var setHeaders = opts.setHeaders
+  opts.setHeaders = undefined
 
   if (setHeaders && typeof setHeaders !== 'function') {
     throw new TypeError('option setHeaders must be function')
   }
 
   // setup options for send
-  options.maxage = options.maxage || options.maxAge || 0
-  options.root = root
+  opts.maxage = opts.maxage || opts.maxAge || 0
+  opts.root = root
 
   return function serveStatic(req, res, next) {
     if (req.method !== 'GET' && req.method !== 'HEAD') {
       return next()
     }
 
-    var opts = merge({}, options)
     var originalUrl = parseurl.original(req)
     var path = parseurl(req).pathname
     var hasTrailingSlash = originalUrl.pathname[originalUrl.pathname.length - 1] === '/'

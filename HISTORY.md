@@ -1,6 +1,7 @@
 unreleased
 ==========
 
+  * Fix reading options from options prototype
   * deps: escape-html@1.0.2
   * deps: send@0.13.0
     - Allow Node.js HTTP server to set `Date` response header
