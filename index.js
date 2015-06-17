@@ -46,9 +46,6 @@ function serveStatic(root, options) {
   // copy options object
   var opts = Object.create(options || null)
 
-  // resolve root to absolute
-  root = resolve(root)
-
   // default redirect
   var redirect = opts.redirect !== false
 
@@ -62,7 +59,7 @@ function serveStatic(root, options) {
 
   // setup options for send
   opts.maxage = opts.maxage || opts.maxAge || 0
-  opts.root = root
+  opts.root = resolve(root)
 
   return function serveStatic(req, res, next) {
     if (req.method !== 'GET' && req.method !== 'HEAD') {

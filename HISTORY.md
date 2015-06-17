@@ -17,6 +17,7 @@ unreleased
     - perf: enable strict mode
     - perf: remove unnecessary array allocations
   * perf: enable strict mode
+  * perf: remove argument reassignment
 
 1.9.3 / 2015-05-14
 ==================
