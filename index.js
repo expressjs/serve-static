@@ -90,13 +90,16 @@ function serveStatic(root, options) {
         originalUrl.pathname = collapseLeadingSlashes(originalUrl.pathname + '/')
 
         // reformat the URL
-        var target = url.format(originalUrl)
+        var loc = url.format(originalUrl)
+        var msg = 'Redirecting to <a href="' + escapeHtml(loc) + '">' + escapeHtml(loc) + '</a>\n'
 
         // send redirect response
         res.statusCode = 303
-        res.setHeader('Content-Type', 'text/html; charset=utf-8')
-        res.setHeader('Location', target)
-        res.end('Redirecting to <a href="' + escapeHtml(target) + '">' + escapeHtml(target) + '</a>\n')
+        res.setHeader('Content-Type', 'text/html; charset=UTF-8')
+        res.setHeader('Content-Length', Buffer.byteLength(msg))
+        res.setHeader('X-Content-Type-Options', 'nosniff')
+        res.setHeader('Location', loc)
+        res.end(msg)
       })
     } else {
       // forward to next middleware on directory
