@@ -184,6 +184,147 @@ describe('serveStatic()', function(){
     })
   })
 
+  describe('fallthrough', function () {
+    it('should default to true', function (done) {
+      request(createServer())
+      .get('/does-not-exist')
+      .expect(404, 'sorry!', done)
+    })
+
+    describe('when true', function () {
+      before(function () {
+        this.server = createServer(fixtures, {'fallthrough': true})
+      })
+
+      it('should fall-through when OPTIONS request', function (done) {
+        request(this.server)
+        .options('/todo.txt')
+        .expect(404, 'sorry!', done)
+      })
+
+      it('should fall-through when URL malformed', function (done) {
+        request(this.server)
+        .get('/%')
+        .expect(404, 'sorry!', done)
+      })
+
+      it('should fall-through when traversing past root', function (done) {
+        request(this.server)
+        .get('/users/../../todo.txt')
+        .expect(404, 'sorry!', done)
+      })
+
+      it('should fall-through when URL too long', function (done) {
+        request(this.server)
+        .get('/' + Array(8192).join('foobar'))
+        .expect(404, 'sorry!', done)
+      })
+
+      describe('with redirect: true', function () {
+        before(function () {
+          this.server = createServer(fixtures, {'fallthrough': true, 'redirect': true})
+        })
+
+        it('should fall-through when directory', function (done) {
+          request(this.server)
+          .get('/pets/')
+          .expect(404, 'sorry!', done)
+        })
+
+        it('should redirect when directory without slash', function (done) {
+          request(this.server)
+          .get('/pets')
+          .expect(303, /Redirecting/, done)
+        })
+      })
+
+      describe('with redirect: false', function () {
+        before(function () {
+          this.server = createServer(fixtures, {'fallthrough': true, 'redirect': false})
+        })
+
+        it('should fall-through when directory', function (done) {
+          request(this.server)
+          .get('/pets/')
+          .expect(404, 'sorry!', done)
+        })
+
+        it('should fall-through when directory without slash', function (done) {
+          request(this.server)
+          .get('/pets')
+          .expect(404, 'sorry!', done)
+        })
+      })
+    })
+
+    describe('when false', function () {
+      before(function () {
+        this.server = createServer(fixtures, {'fallthrough': false})
+      })
+
+      it('should 405 when OPTIONS request', function (done) {
+        request(this.server)
+        .options('/todo.txt')
+        .expect('Allow', 'GET, HEAD')
+        .expect(405, done)
+      })
+
+      it('should 400 when URL malformed', function (done) {
+        request(this.server)
+        .get('/%')
+        .expect(400, /BadRequestError/, done)
+      })
+
+      it('should 403 when traversing past root', function (done) {
+        request(this.server)
+        .get('/users/../../todo.txt')
+        .expect(403, /ForbiddenError/, done)
+      })
+
+      it('should 404 when URL too long', function (done) {
+        request(this.server)
+        .get('/' + Array(8192).join('foobar'))
+        .expect(404, /ENAMETOOLONG/, done)
+      })
+
+      describe('with redirect: true', function () {
+        before(function () {
+          this.server = createServer(fixtures, {'fallthrough': false, 'redirect': true})
+        })
+
+        it('should 404 when directory', function (done) {
+          request(this.server)
+          .get('/pets/')
+          .expect(404, /NotFoundError|ENOENT/, done)
+        })
+
+        it('should redirect when directory without slash', function (done) {
+          request(this.server)
+          .get('/pets')
+          .expect(303, /Redirecting/, done)
+        })
+      })
+
+      describe('with redirect: false', function () {
+        before(function () {
+          this.server = createServer(fixtures, {'fallthrough': false, 'redirect': false})
+        })
+
+        it('should 404 when directory', function (done) {
+          request(this.server)
+          .get('/pets/')
+          .expect(404, /NotFoundError|ENOENT/, done)
+        })
+
+        it('should 404 when directory without slash', function (done) {
+          request(this.server)
+          .get('/pets')
+          .expect(404, /NotFoundError|ENOENT/, done)
+        })
+      })
+    })
+  })
+
   describe('hidden files', function(){
     var server;
     before(function () {
@@ -326,43 +467,23 @@ describe('serveStatic()', function(){
     })
   })
 
-  describe('when traversing past root', function(){
-    var server;
+  describe('when traversing past root', function () {
     before(function () {
-      server = createServer();
-    });
-
-    it('should respond with 403 Forbidden', function(done){
-      request(server)
-      .get('/users/../../todo.txt')
-      .expect(403, done);
+      this.server = createServer(fixtures, {'fallthrough': false})
     })
 
-    it('should catch urlencoded ../', function(done){
-      request(server)
+    it('should catch urlencoded ../', function (done) {
+      request(this.server)
       .get('/users/%2e%2e/%2e%2e/todo.txt')
-      .expect(403, done);
+      .expect(403, done)
     })
 
     it('should not allow root path disclosure', function (done) {
-      request(server)
+      request(this.server)
       .get('/users/../../fixtures/todo.txt')
-      .expect(403, done);
+      .expect(403, done)
     })
-  });
-
-  describe('on ENOENT', function(){
-    var server;
-    before(function () {
-      server = createServer();
-    });
-
-    it('should next()', function(done){
-      request(server)
-      .get('/does-not-exist')
-      .expect(404, 'sorry!', done);
-    });
-  });
+  })
 
   describe('Range', function(){
     var server;
@@ -461,47 +582,6 @@ describe('serveStatic()', function(){
         .set('Range', 'asdf')
         .expect('123456789', done);
       });
-    });
-  });
-
-  describe('with a malformed URL', function(){
-    var server;
-    before(function () {
-      server = createServer();
-    });
-
-    it('should respond with 400', function(done){
-      request(server)
-      .get('/%')
-      .expect(400, done);
-    });
-  });
-
-  describe('on ENAMETOOLONG', function(){
-    var server;
-    before(function () {
-      server = createServer();
-    });
-
-    it('should next()', function(done){
-      var path = Array(100).join('foobar');
-
-      request(server)
-      .get('/' + path)
-      .expect(404, done);
-    });
-  });
-
-  describe('on ENOTDIR', function(){
-    var server;
-    before(function () {
-      server = createServer();
-    });
-
-    it('should next()', function(done) {
-      request(server)
-      .get('/todo.txt/a.php')
-      .expect(404, done);
     });
   });
 

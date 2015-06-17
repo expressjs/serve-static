@@ -13,11 +13,11 @@
  * @private
  */
 
-var escapeHtml = require('escape-html');
-var parseurl = require('parseurl');
-var resolve = require('path').resolve;
-var send = require('send');
-var url = require('url');
+var escapeHtml = require('escape-html')
+var parseUrl = require('parseurl')
+var resolve = require('path').resolve
+var send = require('send')
+var url = require('url')
 
 /**
  * Module exports.
@@ -46,12 +46,14 @@ function serveStatic(root, options) {
   // copy options object
   var opts = Object.create(options || null)
 
+  // fall-though
+  var fallthrough = opts.fallthrough !== false
+
   // default redirect
   var redirect = opts.redirect !== false
 
   // headers listener
   var setHeaders = opts.setHeaders
-  opts.setHeaders = undefined
 
   if (setHeaders && typeof setHeaders !== 'function') {
     throw new TypeError('option setHeaders must be function')
@@ -61,59 +63,61 @@ function serveStatic(root, options) {
   opts.maxage = opts.maxage || opts.maxAge || 0
   opts.root = resolve(root)
 
+  // construct directory listener
+  var onDirectory = redirect
+    ? createRedirectDirectoryListener()
+    : createNotFoundDirectoryListener()
+
   return function serveStatic(req, res, next) {
     if (req.method !== 'GET' && req.method !== 'HEAD') {
-      return next()
+      if (fallthrough) {
+        return next()
+      }
+
+      // method not allowed
+      res.statusCode = 405
+      res.setHeader('Allow', 'GET, HEAD')
+      res.setHeader('Content-Length', '0')
+      res.end()
+      return
     }
 
-    var originalUrl = parseurl.original(req)
-    var path = parseurl(req).pathname
-    var hasTrailingSlash = originalUrl.pathname[originalUrl.pathname.length - 1] === '/'
+    var forwardError = !fallthrough
+    var originalUrl = parseUrl.original(req)
+    var path = parseUrl(req).pathname
 
-    if (path === '/' && !hasTrailingSlash) {
-      // make sure redirect occurs at mount
+    // make sure redirect occurs at mount
+    if (path === '/' && originalUrl.pathname.substr(-1) !== '/') {
       path = ''
     }
 
     // create send stream
     var stream = send(req, path, opts)
 
-    if (redirect) {
-      // redirect relative to originalUrl
-      stream.on('directory', function redirect() {
-        if (hasTrailingSlash) {
-          return next()
-        }
-
-        // append trailing slash
-        originalUrl.path = null
-        originalUrl.pathname = collapseLeadingSlashes(originalUrl.pathname + '/')
-
-        // reformat the URL
-        var loc = url.format(originalUrl)
-        var msg = 'Redirecting to <a href="' + escapeHtml(loc) + '">' + escapeHtml(loc) + '</a>\n'
-
-        // send redirect response
-        res.statusCode = 303
-        res.setHeader('Content-Type', 'text/html; charset=UTF-8')
-        res.setHeader('Content-Length', Buffer.byteLength(msg))
-        res.setHeader('X-Content-Type-Options', 'nosniff')
-        res.setHeader('Location', loc)
-        res.end(msg)
-      })
-    } else {
-      // forward to next middleware on directory
-      stream.on('directory', next)
-    }
+    // add directory handler
+    stream.on('directory', onDirectory)
 
     // add headers listener
     if (setHeaders) {
       stream.on('headers', setHeaders)
     }
 
-    // forward non-404 errors
+    // add file listener for fallthrough
+    if (fallthrough) {
+      stream.on('file', function onFile() {
+        // once file is determined, always forward error
+        forwardError = true
+      })
+    }
+
+    // forward errors
     stream.on('error', function error(err) {
-      next(err.status === 404 ? null : err)
+      if (forwardError || !(err.statusCode < 500)) {
+        next(err)
+        return
+      }
+
+      next()
     })
 
     // pipe
@@ -135,4 +139,49 @@ function collapseLeadingSlashes(str) {
   return i > 1
     ? '/' + str.substr(i)
     : str
+}
+
+/**
+ * Create a directory listener that just 404s.
+ * @private
+ */
+
+function createNotFoundDirectoryListener() {
+  return function notFound() {
+    this.error(404)
+  }
+}
+
+/**
+ * Create a directory listener that performs a redirect.
+ * @private
+ */
+
+function createRedirectDirectoryListener() {
+  return function redirect() {
+    if (this.hasTrailingSlash()) {
+      this.error(404)
+      return
+    }
+
+    // get original URL
+    var originalUrl = parseUrl.original(this.req)
+
+    // append trailing slash
+    originalUrl.path = null
+    originalUrl.pathname = collapseLeadingSlashes(originalUrl.pathname + '/')
+
+    // reformat the URL
+    var loc = url.format(originalUrl)
+    var msg = 'Redirecting to <a href="' + escapeHtml(loc) + '">' + escapeHtml(loc) + '</a>\n'
+    var res = this.res
+
+    // send redirect response
+    res.statusCode = 303
+    res.setHeader('Content-Type', 'text/html; charset=UTF-8')
+    res.setHeader('Content-Length', Buffer.byteLength(msg))
+    res.setHeader('X-Content-Type-Options', 'nosniff')
+    res.setHeader('Location', loc)
+    res.end(msg)
+  }
 }

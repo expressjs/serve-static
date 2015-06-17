@@ -1,6 +1,9 @@
 unreleased
 ==========
 
+  * Add `fallthrough` option
+    - Allows declaring this middleware is the final destination
+    - Provides better integration with Express patterns
   * Fix reading options from options prototype
   * Improve the default redirect response headers
   * deps: escape-html@1.0.2

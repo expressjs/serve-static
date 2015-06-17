@@ -41,8 +41,8 @@ to "deny").
 The default value is `'ignore'`.
 
   - `'allow'` No special treatment for dotfiles.
-  - `'deny'` Send a 403 for any request for a dotfile.
-  - `'ignore'` Pretend like the dotfile does not exist and call `next()`.
+  - `'deny'` Deny a request for a dotfile and 403/`next()`.
+  - `'ignore'` Pretend like the dotfile does not exist and 404/`next()`.
 
 ##### etag
 
@@ -55,6 +55,25 @@ extensions will be added to the file name and search for. The first that
 exists will be served. Example: `['html', 'htm']`.
 
 The default value is `false`.
+
+##### fallthrough
+
+Set the middleware to have client errors fall-through as just unhandled
+requests, otherwise forward a client error. The difference is that client
+errors like a bad request or a request to a non-existent file will cause
+this middleware to simply `next()` to your next middleware when this value
+is `true`. When this value is `false`, these errors (even 404s), will invoke
+`next(err)`.
+
+Typically `true` is desired such that multiple physical directories can be
+mapped to the same web address or for routes to fill in non-existent files.
+
+The value `false` can be used if this middleware is mounted at a path that
+is designed to be strictly a single file system directory, which allows for
+short-circuiting 404s for less overhead. This middleware will also reply to
+all methods.
+
+The default value is `true`.
 
 ##### index
 
