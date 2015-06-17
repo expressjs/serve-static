@@ -10,6 +10,7 @@
 
 /**
  * Module dependencies.
+ * @private
  */
 
 var escapeHtml = require('escape-html');
@@ -20,13 +21,21 @@ var send = require('send');
 var url = require('url');
 
 /**
- * @param {String} root
- * @param {Object} options
- * @return {Function}
- * @api public
+ * Module exports.
+ * @public
  */
 
-exports = module.exports = function serveStatic(root, options) {
+module.exports = serveStatic
+module.exports.mime = send.mime
+
+/**
+ * @param {string} root
+ * @param {object} [options]
+ * @return {function}
+ * @public
+ */
+
+function serveStatic(root, options) {
   if (!root) {
     throw new TypeError('root path required')
   }
@@ -113,15 +122,6 @@ exports = module.exports = function serveStatic(root, options) {
     stream.pipe(res)
   }
 }
-
-/**
- * Expose mime module.
- *
- * If you wish to extend the mime table use this
- * reference to the "mime" module in the npm registry.
- */
-
-exports.mime = send.mime
 
 /**
  * Collapse all leading slashes into a single slash
