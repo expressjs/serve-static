@@ -1,5 +1,5 @@
-unreleased
-==========
+1.10.0 / 2015-06-17
+===================
 
   * Add `fallthrough` option
     - Allows declaring this middleware is the final destination
