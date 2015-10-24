@@ -9,10 +9,13 @@ environment:
     - nodejs_version: "2.1"
 install:
   - ps: Install-Product node $env:nodejs_version
+  - if "%nodejs_version%" equ "0.8" npm rm --save-dev istanbul
   - npm install
 build: off
 test_script:
   - node --version
   - npm --version
-  - npm run test-ci
+  - set npm_test_command=test
+  - for /f %%l in ('npm -ps ls istanbul') do set npm_test_command=test-ci
+  - npm run %npm_test_command%
 version: "{build}"
