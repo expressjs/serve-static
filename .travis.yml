@@ -6,7 +6,6 @@ node_js:
   - "1.8"
   - "2.0"
   - "2.1"
-  - "stable"
 sudo: false
 script: "npm run-script test-ci"
 after_script: "npm install coveralls@2.10.0 && cat ./coverage/lcov.info | coveralls"
