@@ -7,6 +7,8 @@ environment:
     - nodejs_version: "1.8"
     - nodejs_version: "2.0"
     - nodejs_version: "2.1"
+    - nodejs_version: "4.0"
+    - nodejs_version: "4.1"
 install:
   - ps: Install-Product node $env:nodejs_version
   - if "%nodejs_version%" equ "0.8" npm rm --save-dev istanbul
