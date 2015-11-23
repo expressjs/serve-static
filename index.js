@@ -91,7 +91,8 @@ function serveStatic(root, options) {
       path = ''
     }
 
-    // create send stream
+    // create send stream (etag computation and other options are taken care of
+    // in this method)
     var stream = send(req, path, opts)
 
     // add directory handler
