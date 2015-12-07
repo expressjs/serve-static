@@ -91,6 +91,8 @@ function serveStatic(root, options) {
       path = ''
     }
 
+    path = decodeURIComponent(path)
+
     // create send stream
     var stream = send(req, path, opts)
 
