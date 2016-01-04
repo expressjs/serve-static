@@ -119,13 +119,6 @@ describe('serveStatic()', function(){
       .get('/.hidden')
       .expect(404, done);
     });
-
-    it('should set max-age=0 by default', function(done){
-      request(server)
-      .get('/todo.txt')
-      .expect('cache-control', 'public, max-age=0')
-      .expect(200, done)
-    });
   });
 
   (skipRelative ? describe.skip : describe)('current dir', function(){
@@ -588,7 +581,7 @@ describe('serveStatic()', function(){
   describe('when index at mount point', function(){
     var server;
     before(function () {
-      server = createServer('test/fixtures/users', null, function (req) {
+      server = createServer(fixtures + '/users', null, function (req) {
         req.originalUrl = req.url;
         req.url = '/' + req.url.split('/').slice(2).join('/');
       });
