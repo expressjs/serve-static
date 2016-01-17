@@ -5,6 +5,11 @@ unreleased
     - perf: enable strict mode
     - perf: optimize string replacement
     - perf: use faster string coercion
+  * deps: send@0.13.1
+    - deps: depd@~1.1.0
+    - deps: destroy@~1.0.4
+    - deps: escape-html@~1.0.3
+    - deps: range-parser@~1.0.3
 
 1.10.0 / 2015-06-17
 ===================
