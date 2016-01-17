@@ -1,5 +1,5 @@
-unreleased
-==========
+1.10.1 / 2016-01-16
+===================
 
   * deps: escape-html@~1.0.3
     - perf: enable strict mode
