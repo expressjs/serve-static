@@ -1,7 +1,7 @@
 {
   "name": "serve-static",
   "description": "Serve static files",
-  "version": "1.10.1",
+  "version": "1.10.2",
   "author": "Douglas Christopher Wilson <doug@somethingdoug.com>",
   "license": "MIT",
   "repository": "expressjs/serve-static",

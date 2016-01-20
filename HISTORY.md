@@ -1,5 +1,5 @@
-unreleased
-==========
+1.10.2 / 2016-01-19
+===================
 
   * deps: parseurl@~1.3.1
     - perf: enable strict mode
