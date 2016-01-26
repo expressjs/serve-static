@@ -467,7 +467,7 @@ describe('serveStatic()', function(){
 
       request(server)
       .get('/ipsum.txt')
-      .expect('content-length', 1029)
+      .expect('Content-Encoding', 'gzip')
       .expect(200, done)
     })
 
@@ -476,7 +476,7 @@ describe('serveStatic()', function(){
 
       request(server)
       .get('/ipsum.txt')
-      .expect('content-length', 2469)
+      .expect(shouldNotHaveHeader('Content-Encoding'))
       .expect(200, done)
     })
 
@@ -486,7 +486,7 @@ describe('serveStatic()', function(){
       request(server)
       .get('/ipsum.txt')
       .set('Accept-Encoding', 'none')
-      .expect('content-length', 2469)
+      .expect(shouldNotHaveHeader('Content-Encoding'))
       .expect(200, done)
     })
 
@@ -495,7 +495,7 @@ describe('serveStatic()', function(){
 
       request(server)
       .get('/todo.html')
-      .expect('content-length', 18)
+      .expect(shouldNotHaveHeader('Content-Encoding'))
       .expect(200, done)
     })
 
