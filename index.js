@@ -15,9 +15,11 @@
 
 var escapeHtml = require('escape-html')
 var parseUrl = require('parseurl')
-var resolve = require('path').resolve
+var path = require('path')
 var send = require('send')
 var url = require('url')
+var find = require('find')
+var mime = send.mime
 
 /**
  * Module exports.
@@ -25,7 +27,7 @@ var url = require('url')
  */
 
 module.exports = serveStatic
-module.exports.mime = send.mime
+module.exports.mime = mime
 
 /**
  * @param {string} root
@@ -52,6 +54,9 @@ function serveStatic(root, options) {
   // default redirect
   var redirect = opts.redirect !== false
 
+  // look for gzipped assets
+  var serveGzip = opts.serveGzip === true
+
   // headers listener
   var setHeaders = opts.setHeaders
 
@@ -61,12 +66,18 @@ function serveStatic(root, options) {
 
   // setup options for send
   opts.maxage = opts.maxage || opts.maxAge || 0
-  opts.root = resolve(root)
+  opts.root = path.resolve(root)
 
   // construct directory listener
   var onDirectory = redirect
     ? createRedirectDirectoryListener()
     : createNotFoundDirectoryListener()
+
+  // cache files in mounted directory
+  var gzipCache
+  if (serveGzip) {
+    gzipCache = createCache(root)
+  }
 
   return function serveStatic(req, res, next) {
     if (req.method !== 'GET' && req.method !== 'HEAD') {
@@ -82,46 +93,47 @@ function serveStatic(root, options) {
       return
     }
 
-    var forwardError = !fallthrough
     var originalUrl = parseUrl.original(req)
-    var path = parseUrl(req).pathname
+    var originalPath = parseUrl(req).pathname
 
     // make sure redirect occurs at mount
-    if (path === '/' && originalUrl.pathname.substr(-1) !== '/') {
-      path = ''
+    if (originalPath === '/' && originalUrl.pathname.substr(-1) !== '/') {
+      originalPath = ''
     }
 
-    // create send stream
-    var stream = send(req, path, opts)
-
-    // add directory handler
-    stream.on('directory', onDirectory)
-
-    // add headers listener
-    if (setHeaders) {
-      stream.on('headers', setHeaders)
+    // options passed to stream
+    var streamOptions = {
+      opts: opts,
+      fallthrough: fallthrough,
+      setHeaders: setHeaders,
+      onDirectory: onDirectory,
+      path: originalPath
     }
 
-    // add file listener for fallthrough
-    if (fallthrough) {
-      stream.on('file', function onFile() {
-        // once file is determined, always forward error
-        forwardError = true
-      })
+    // static gzip serving disabled
+    var fallbackStream = streamFile.bind(this, req, res, next, streamOptions)
+    if (!serveGzip) {
+      return fallbackStream()
     }
 
-    // forward errors
-    stream.on('error', function error(err) {
-      if (forwardError || !(err.statusCode < 500)) {
-        next(err)
-        return
-      }
+    // gzip encoding not supported by client
+    var acceptEncoding = req.headers['accept-encoding'] || ''
+    if (acceptEncoding.indexOf('gzip') === -1) {
+      return fallbackStream()
+    }
 
-      next()
-    })
+    // static gzip file not found
+    var gzipPath = originalPath + '.gz'
+    if (!gzipCache[path.join(root, gzipPath)]) {
+      return fallbackStream()
+    }
 
-    // pipe
-    stream.pipe(res)
+    // set gzip specific headers
+    setGzipHeaders(res, streamOptions.path)
+
+    // stream gzipped file
+    streamOptions.path = gzipPath
+    return streamFile.call(this, req, res, next, streamOptions)
   }
 }
 
@@ -184,4 +196,73 @@ function createRedirectDirectoryListener() {
     res.setHeader('Location', loc)
     res.end(msg)
   }
+}
+
+/**
+ * Modifies the response header for gzipped assets
+ * @private
+ */
+
+function setGzipHeaders(res, path) {
+  var type = mime.lookup(path)
+  var charset = mime.charsets.lookup(type)
+
+  res.setHeader('Content-Type', type + (charset ? '; charset=' + charset : ''))
+  res.setHeader('Content-Encoding', 'gzip')
+  res.setHeader('Vary', 'Accept-Encoding')
+}
+
+/**
+ * Searches root folder on init for gzipped assets
+ * @private
+ */
+
+function createCache(root) {
+  var cache = Object.create(null)
+
+  find.fileSync(/\.gz$/, root).forEach(function(file) {
+    cache[file] = true
+  })
+
+  return cache
+}
+
+/**
+ * Streams a single static file to the client
+ * @private
+ */
+
+function streamFile(req, res, next, params) {
+  // create send stream
+  var stream = send(req, params.path, params.opts)
+  var forwardError = !params.fallthrough
+
+  // add directory handler
+  stream.on('directory', params.onDirectory)
+
+  // add headers listener
+  if (params.setHeaders) {
+    stream.on('headers', params.setHeaders)
+  }
+
+  // add file listener for fallthrough
+  if (params.fallthrough) {
+    stream.on('file', function onFile() {
+      // once file is determined, always forward error
+      forwardError = true
+    })
+  }
+
+  // forward errors
+  stream.on('error', function error(err) {
+    if (forwardError || !(err.statusCode < 500)) {
+      next(err)
+      return
+    }
+
+    next()
+  })
+
+  // pipe
+  stream.pipe(res)
 }

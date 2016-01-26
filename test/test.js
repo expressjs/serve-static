@@ -460,6 +460,47 @@ describe('serveStatic()', function(){
     })
   })
 
+  describe('serveGzip', function () {
+
+    it('should serve the compressed file when enabled', function(done){
+      var server = createServer(fixtures, {serveGzip: true})
+
+      request(server)
+      .get('/ipsum.txt')
+      .expect('Content-Encoding', 'gzip')
+      .expect(200, done)
+    })
+
+    it('should serve the regular file by default', function(done){
+      var server = createServer(fixtures)
+
+      request(server)
+      .get('/ipsum.txt')
+      .expect(shouldNotHaveHeader('Content-Encoding'))
+      .expect(200, done)
+    })
+
+    it('should serve the regular file if the client doesn\'t support gzip', function(done){
+      var server = createServer(fixtures, {serveGzip: true})
+
+      request(server)
+      .get('/ipsum.txt')
+      .set('Accept-Encoding', 'none')
+      .expect(shouldNotHaveHeader('Content-Encoding'))
+      .expect(200, done)
+    })
+
+    it('should serve the regular file when no compressed file found', function(done){
+      var server = createServer(fixtures, {serveGzip: true})
+
+      request(server)
+      .get('/todo.html')
+      .expect(shouldNotHaveHeader('Content-Encoding'))
+      .expect(200, done)
+    })
+
+  })
+
   describe('when traversing past root', function () {
     before(function () {
       this.server = createServer(fixtures, {'fallthrough': false})
