@@ -1,6 +1,7 @@
 unreleased
 ==========
 
+  * Use status code 301 for redirects
   * deps: send@0.14.0
     - Add `acceptRanges` option
     - Add `cacheControl` option

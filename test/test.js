@@ -292,7 +292,7 @@ describe('serveStatic()', function () {
         it('should redirect when directory without slash', function (done) {
           request(this.server)
           .get('/pets')
-          .expect(303, /Redirecting/, done)
+          .expect(301, /Redirecting/, done)
         })
       })
 
@@ -359,7 +359,7 @@ describe('serveStatic()', function () {
         it('should redirect when directory without slash', function (done) {
           request(this.server)
           .get('/pets')
-          .expect(303, /Redirecting/, done)
+          .expect(301, /Redirecting/, done)
         })
       })
 
@@ -442,28 +442,28 @@ describe('serveStatic()', function () {
       request(server)
       .get('/users')
       .expect('Location', '/users/')
-      .expect(303, done)
+      .expect(301, done)
     })
 
     it('should include HTML link', function (done) {
       request(server)
       .get('/users')
       .expect('Location', '/users/')
-      .expect(303, /<a href="\/users\/">/, done)
+      .expect(301, /<a href="\/users\/">/, done)
     })
 
     it('should redirect directories with query string', function (done) {
       request(server)
       .get('/users?name=john')
       .expect('Location', '/users/?name=john')
-      .expect(303, done)
+      .expect(301, done)
     })
 
     it('should not redirect to protocol-relative locations', function (done) {
       request(server)
       .get('//users')
       .expect('Location', '/users/')
-      .expect(303, done)
+      .expect(301, done)
     })
 
     it('should not redirect incorrectly', function (done) {
@@ -521,7 +521,7 @@ describe('serveStatic()', function () {
       request(server)
       .get('/users')
       .expect(shouldNotHaveHeader('x-custom'))
-      .expect(303, done)
+      .expect(301, done)
     })
   })
 
@@ -656,7 +656,7 @@ describe('serveStatic()', function () {
       request(server)
       .get('/users')
       .expect('Location', '/users/')
-      .expect(303, done)
+      .expect(301, done)
     })
   })
 
@@ -673,14 +673,14 @@ describe('serveStatic()', function () {
       request(server)
       .get('/static/users')
       .expect('Location', '/static/users/')
-      .expect(303, done)
+      .expect(301, done)
     })
 
     it('should not choke on auth-looking URL', function (done) {
       request(server)
       .get('//todo@txt')
       .expect('Location', '/todo@txt/')
-      .expect(303, done)
+      .expect(301, done)
     })
   })
 
@@ -727,7 +727,7 @@ describe('serveStatic()', function () {
       request(server)
       .get('/static/users')
       .expect('Location', '/static/users/')
-      .expect(303, done)
+      .expect(301, done)
     })
 
     it('should next() on mount point', function (done) {
@@ -740,7 +740,7 @@ describe('serveStatic()', function () {
       request(server)
       .get('/static')
       .expect('Location', '/static/')
-      .expect(303, done)
+      .expect(301, done)
     })
   })
 })

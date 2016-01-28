@@ -177,7 +177,7 @@ function createRedirectDirectoryListener () {
     var res = this.res
 
     // send redirect response
-    res.statusCode = 303
+    res.statusCode = 301
     res.setHeader('Content-Type', 'text/html; charset=UTF-8')
     res.setHeader('Content-Length', Buffer.byteLength(msg))
     res.setHeader('X-Content-Type-Options', 'nosniff')
