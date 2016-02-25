@@ -60,7 +60,7 @@ describe('serveStatic()', function(){
 
     it('should support urlencoded pathnames', function(done){
       request(server)
-      .get('/foo%20bar')
+      .get('/foo%20bar.txt')
       .expect(200, 'baz', done);
     });
 
@@ -462,6 +462,24 @@ describe('serveStatic()', function(){
 
   describe('serveGzip', function () {
 
+    it('should not modify directory requests', function(done){
+      var server = createServer(fixtures, {serveGzip: true})
+
+      request(server)
+      .get('/folder-test')
+      .expect('Location', '/folder-test/')
+      .expect(303, done)
+    })
+
+    it('should handle serving files with special characters', function(done){
+      var server = createServer(fixtures, {serveGzip: true})
+
+      request(server)
+      .get('/foo%20bar.txt')
+      .expect('Content-Encoding', 'gzip')
+      .expect(200, done)
+    })
+
     it('should serve the compressed file when enabled', function(done){
       var server = createServer(fixtures, {serveGzip: true})
 
@@ -471,7 +489,7 @@ describe('serveStatic()', function(){
       .expect(200, done)
     })
 
-    it('should serve the regular file by default', function(done){
+    it('should serve uncompressed by default', function(done){
       var server = createServer(fixtures)
 
       request(server)
@@ -480,7 +498,36 @@ describe('serveStatic()', function(){
       .expect(200, done)
     })
 
-    it('should serve the regular file if the client doesn\'t support gzip', function(done){
+    it('should serve uncompressed when no compressed file found', function(done){
+      var server = createServer(fixtures, {serveGzip: true})
+
+      request(server)
+      .get('/todo.html')
+      .expect(shouldNotHaveHeader('Content-Encoding'))
+      .expect(200, done)
+    })
+
+    it('should serve compressed if gzip is explicitly set', function(done){
+      var server = createServer(fixtures, {serveGzip: true})
+
+      request(server)
+      .get('/ipsum.txt')
+      .set('Accept-Encoding', 'gzip;q=0.5, *;q=0')
+      .expect('Content-Encoding', 'gzip')
+      .expect(200, done)
+    })
+
+    it('should serve compressed if client sends "*"', function(done){
+      var server = createServer(fixtures, {serveGzip: true})
+
+      request(server)
+      .get('/ipsum.txt')
+      .set('Accept-Encoding', '*')
+      .expect('Content-Encoding', 'gzip')
+      .expect(200, done)
+    })
+
+    it('should serve uncompressed if client sends "none"', function(done){
       var server = createServer(fixtures, {serveGzip: true})
 
       request(server)
@@ -490,11 +537,12 @@ describe('serveStatic()', function(){
       .expect(200, done)
     })
 
-    it('should serve the regular file when no compressed file found', function(done){
+    it('should serve uncompressed if client sends "*" with a QV of "q=0"', function(done){
       var server = createServer(fixtures, {serveGzip: true})
 
       request(server)
-      .get('/todo.html')
+      .get('/ipsum.txt')
+      .set('Accept-Encoding', 'deflate, *;q=0')
       .expect(shouldNotHaveHeader('Content-Encoding'))
       .expect(200, done)
     })

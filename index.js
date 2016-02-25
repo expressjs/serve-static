@@ -94,11 +94,11 @@ function serveStatic(root, options) {
     }
 
     var originalUrl = parseUrl.original(req)
-    var originalPath = parseUrl(req).pathname
+    var requestedPathName = parseUrl(req).pathname
 
     // make sure redirect occurs at mount
-    if (originalPath === '/' && originalUrl.pathname.substr(-1) !== '/') {
-      originalPath = ''
+    if (requestedPathName === '/' && originalUrl.pathname.substr(-1) !== '/') {
+      requestedPathName = ''
     }
 
     // options passed to stream
@@ -107,33 +107,42 @@ function serveStatic(root, options) {
       fallthrough: fallthrough,
       setHeaders: setHeaders,
       onDirectory: onDirectory,
-      path: originalPath
+      path: requestedPathName
     }
 
-    // static gzip serving disabled
-    var fallbackStream = streamFile.bind(this, req, res, next, streamOptions)
+    // stream the uncompressed version of a requested file
+    function sendStream(options) {
+      return streamFile.call(this, req, res, next, options)
+    }
+
+    // gzip globally disabled
     if (!serveGzip) {
-      return fallbackStream()
+      return sendStream(streamOptions)
+    }
+
+    // path is a directory passthrough, this is a lightweight check for file extension
+    // the server will not serve gzipped versions of files without extensions
+    if (requestedPathName.indexOf('.') === -1) {
+      return sendStream(streamOptions)
     }
 
     // gzip encoding not supported by client
-    var acceptEncoding = req.headers['accept-encoding'] || ''
-    if (acceptEncoding.indexOf('gzip') === -1) {
-      return fallbackStream()
+    if (!isGzipAcceptedRequest(req)) {
+      return sendStream(streamOptions)
     }
 
     // static gzip file not found
-    var gzipPath = originalPath + '.gz'
+    var gzipPath = decodeURIComponent(requestedPathName) + '.gz'
     if (!gzipCache[path.join(root, gzipPath)]) {
-      return fallbackStream()
+      return sendStream(streamOptions)
     }
 
     // set gzip specific headers
-    setGzipHeaders(res, streamOptions.path)
+    streamOptions.setHeaders = setGzipHeaders
 
     // stream gzipped file
     streamOptions.path = gzipPath
-    return streamFile.call(this, req, res, next, streamOptions)
+    return sendStream(streamOptions)
   }
 }
 
@@ -199,6 +208,59 @@ function createRedirectDirectoryListener() {
 }
 
 /**
+ * Determines client gzip support via the Accept-Encoding request header.
+ * @see {@link https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.3}
+ * @private
+ */
+
+function isGzipAcceptedRequest(req) {
+  var acceptEncodingHeader = req.headers['accept-encoding'] || ''
+
+  // Header empty, not supported
+  if (!acceptEncodingHeader) {
+    return false
+  }
+
+  // Header accepts all encodings
+  if (acceptEncodingHeader === '*') {
+    return true
+  }
+
+  // The wildcard switch will be considered if a wildcard is set in a list
+  // and gzip is not explicitly set.
+  var wildcardEncodingEnabled = false
+
+  // Split comma-delimited encodings list
+  var encodingsList = acceptEncodingHeader.split(',')
+  for (var i = 0; i < encodingsList.length; i++) {
+
+    // Split by ";" for optional quality value weight
+    // https://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.9
+    var encoding = encodingsList[i].split(';')
+    var encodingName = encoding[0]
+    var isWildCard = encodingName === '*'
+
+    // Currently we only care about gzip or a wildcard
+    if (encodingName === 'gzip' || isWildCard) {
+      var encodingQV = encoding[1] && encoding[1].split('=')
+      var encodingWeight = encodingQV && encodingQV[1] ? parseFloat(encodingQV[1], 10) : 1.0
+      var encodingSupported = encodingWeight > 0.0
+
+      // Explicitly set gzip
+      if (!isWildCard) {
+        return encodingSupported
+      }
+
+      // Wildcard switch changed
+      wildcardEncodingEnabled = encodingSupported
+    }
+  }
+
+  // We never explictly found gzip, use the wildcard state
+  return wildcardEncodingEnabled
+}
+
+/**
  * Modifies the response header for gzipped assets
  * @private
  */
@@ -209,7 +271,7 @@ function setGzipHeaders(res, path) {
 
   res.setHeader('Content-Type', type + (charset ? '; charset=' + charset : ''))
   res.setHeader('Content-Encoding', 'gzip')
-  res.setHeader('Vary', 'Accept-Encoding')
+  res.setHeader('Vary', res.getHeader('Vary') || 'Accept-Encoding')
 }
 
 /**
