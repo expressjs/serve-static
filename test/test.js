@@ -537,6 +537,27 @@ describe('serveStatic()', function(){
       .expect(200, done)
     })
 
+    it('should serve uncompressed if client sends nothing', function(done){
+      var server = createServer(fixtures, {serveGzip: true})
+
+      request(server)
+      .get('/ipsum.txt')
+      .set('Accept-Encoding', '')
+      .expect(shouldNotHaveHeader('Content-Encoding'))
+      .expect(200, done)
+    })
+
+    it('should serve compressed if client sends "*" with a QV of "q=0.5"', function(done){
+      var server = createServer(fixtures, {serveGzip: true})
+
+      request(server)
+      .get('/ipsum.txt')
+      .set('Accept-Encoding', '*;q=0.5')
+      .expect('Content-Encoding', 'gzip')
+      .expect(200, done)
+    })
+
+
     it('should serve uncompressed if client sends "*" with a QV of "q=0"', function(done){
       var server = createServer(fixtures, {serveGzip: true})
 
