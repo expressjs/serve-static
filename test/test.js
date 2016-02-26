@@ -480,6 +480,17 @@ describe('serveStatic()', function(){
       .expect(200, done)
     })
 
+    it('should serve the correct content type', function(done){
+      var server = createServer(fixtures, {serveGzip: true})
+
+      request(server)
+      .get('/ipsum.txt')
+      .expect('Content-Encoding', 'gzip')
+      .expect('Content-Type', 'text/plain; charset=UTF-8')
+      .expect(200, done)
+    })
+
+
     it('should serve the compressed file when enabled', function(done){
       var server = createServer(fixtures, {serveGzip: true})
 

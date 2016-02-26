@@ -266,9 +266,8 @@ function isGzipAcceptedRequest(req) {
  */
 
 function setGzipHeaders(res, path) {
-  var type = mime.lookup(path)
+  var type = mime.lookup(path.replace(/\.gz$/, ''))
   var charset = mime.charsets.lookup(type)
-
   res.setHeader('Content-Type', type + (charset ? '; charset=' + charset : ''))
   res.setHeader('Content-Encoding', 'gzip')
   res.setHeader('Vary', res.getHeader('Vary') || 'Accept-Encoding')
