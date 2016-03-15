@@ -46,6 +46,8 @@ function serveStatic(root, options) {
   // copy options object
   var opts = Object.create(options || null)
 
+  var setEtagOption = (opts['etag'] !== undefined)
+
   // fall-though
   var fallthrough = opts.fallthrough !== false
 
@@ -69,6 +71,14 @@ function serveStatic(root, options) {
     : createNotFoundDirectoryListener()
 
   return function serveStatic(req, res, next) {
+    // If ETag was not set explicitly get up to date ETag setting from req.app if available
+    if(!setEtagOption && req.app && req.app.get && (typeof req.app.get === 'function')) {
+      var etag = req.app.get('etag')
+      if(etag !== undefined && (etag === true || etag === false)) {
+        opts['etag'] = etag
+      }
+    }
+
     if (req.method !== 'GET' && req.method !== 'HEAD') {
       if (fallthrough) {
         return next()
