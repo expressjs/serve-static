@@ -8,9 +8,13 @@ environment:
     - nodejs_version: "3.3"
     - nodejs_version: "4.4"
     - nodejs_version: "5.10"
+cache:
+  - node_modules
 install:
   - ps: Install-Product node $env:nodejs_version
   - if "%nodejs_version%" equ "0.8" npm rm --save-dev istanbul
+  - if exist node_modules npm prune
+  - if exist node_modules npm rebuild
   - npm install
 build: off
 test_script:
