@@ -1,3 +1,9 @@
+unreleased
+==========
+
+  * deps: send@0.13.2
+    - Fix invalid `Content-Type` header when `send.mime.default_type` unset
+
 1.10.2 / 2016-01-19
 ===================
 
