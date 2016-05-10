@@ -13,6 +13,7 @@
  * @private
  */
 
+var encodeUrl = require('encodeurl')
 var escapeHtml = require('escape-html')
 var parseUrl = require('parseurl')
 var resolve = require('path').resolve
@@ -172,7 +173,7 @@ function createRedirectDirectoryListener () {
     originalUrl.pathname = collapseLeadingSlashes(originalUrl.pathname + '/')
 
     // reformat the URL
-    var loc = url.format(originalUrl)
+    var loc = encodeUrl(url.format(originalUrl))
     var msg = 'Redirecting to <a href="' + escapeHtml(loc) + '">' + escapeHtml(loc) + '</a>\n'
     var res = this.res
 

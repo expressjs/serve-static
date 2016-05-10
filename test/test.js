@@ -435,7 +435,9 @@ describe('serveStatic()', function () {
   describe('redirect', function () {
     var server
     before(function () {
-      server = createServer(fixtures)
+      server = createServer(fixtures, null, function (req, res) {
+        req.url = req.url.replace(/\/snow(\/|$)/, '/snow \u2603$1')
+      })
     })
 
     it('should redirect directories', function (done) {
@@ -464,6 +466,14 @@ describe('serveStatic()', function () {
       .get('//users')
       .expect('Location', '/users/')
       .expect(301, done)
+    })
+
+    it('should ensure redirect URL is properly encoded', function (done) {
+      request(server)
+      .get('/snow')
+      .expect('Location', '/snow%20%E2%98%83/')
+      .expect('Content-Type', /html/)
+      .expect(301, 'Redirecting to <a href="/snow%20%E2%98%83/">/snow%20%E2%98%83/</a>\n', done)
     })
 
     it('should not redirect incorrectly', function (done) {
