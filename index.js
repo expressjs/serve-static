@@ -34,7 +34,7 @@ module.exports.mime = send.mime
  * @public
  */
 
-function serveStatic(root, options) {
+function serveStatic (root, options) {
   if (!root) {
     throw new TypeError('root path required')
   }
@@ -68,7 +68,7 @@ function serveStatic(root, options) {
     ? createRedirectDirectoryListener()
     : createNotFoundDirectoryListener()
 
-  return function serveStatic(req, res, next) {
+  return function serveStatic (req, res, next) {
     if (req.method !== 'GET' && req.method !== 'HEAD') {
       if (fallthrough) {
         return next()
@@ -104,14 +104,14 @@ function serveStatic(root, options) {
 
     // add file listener for fallthrough
     if (fallthrough) {
-      stream.on('file', function onFile() {
+      stream.on('file', function onFile () {
         // once file is determined, always forward error
         forwardError = true
       })
     }
 
     // forward errors
-    stream.on('error', function error(err) {
+    stream.on('error', function error (err) {
       if (forwardError || !(err.statusCode < 500)) {
         next(err)
         return
@@ -129,7 +129,7 @@ function serveStatic(root, options) {
  * Collapse all leading slashes into a single slash
  * @private
  */
-function collapseLeadingSlashes(str) {
+function collapseLeadingSlashes (str) {
   for (var i = 0; i < str.length; i++) {
     if (str[i] !== '/') {
       break
@@ -146,8 +146,8 @@ function collapseLeadingSlashes(str) {
  * @private
  */
 
-function createNotFoundDirectoryListener() {
-  return function notFound() {
+function createNotFoundDirectoryListener () {
+  return function notFound () {
     this.error(404)
   }
 }
@@ -157,8 +157,8 @@ function createNotFoundDirectoryListener() {
  * @private
  */
 
-function createRedirectDirectoryListener() {
-  return function redirect() {
+function createRedirectDirectoryListener () {
+  return function redirect () {
     if (this.hasTrailingSlash()) {
       this.error(404)
       return

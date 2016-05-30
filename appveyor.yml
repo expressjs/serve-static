@@ -13,6 +13,7 @@ cache:
 install:
   - ps: Install-Product node $env:nodejs_version
   - if "%nodejs_version%" equ "0.8" npm rm --save-dev istanbul
+  - npm rm --save-dev eslint eslint-config-standard eslint-plugin-promise eslint-plugin-standard
   - if exist node_modules npm prune
   - if exist node_modules npm rebuild
   - npm install
