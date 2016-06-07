@@ -135,6 +135,71 @@ describe('serveStatic()', function () {
     })
   })
 
+  describe('acceptRanges', function () {
+    describe('when false', function () {
+      it('should not include Accept-Ranges', function (done) {
+        request(createServer(fixtures, {'acceptRanges': false}))
+        .get('/nums')
+        .expect(shouldNotHaveHeader('Accept-Ranges'))
+        .expect(200, '123456789', done)
+      })
+
+      it('should ignore Rage request header', function (done) {
+        request(createServer(fixtures, {'acceptRanges': false}))
+        .get('/nums')
+        .set('Range', 'bytes=0-3')
+        .expect(shouldNotHaveHeader('Accept-Ranges'))
+        .expect(shouldNotHaveHeader('Content-Range'))
+        .expect(200, '123456789', done)
+      })
+    })
+
+    describe('when true', function () {
+      it('should include Accept-Ranges', function (done) {
+        request(createServer(fixtures, {'acceptRanges': true}))
+        .get('/nums')
+        .expect('Accept-Ranges', 'bytes')
+        .expect(200, '123456789', done)
+      })
+
+      it('should obey Rage request header', function (done) {
+        request(createServer(fixtures, {'acceptRanges': true}))
+        .get('/nums')
+        .set('Range', 'bytes=0-3')
+        .expect('Accept-Ranges', 'bytes')
+        .expect('Content-Range', 'bytes 0-3/9')
+        .expect(206, '1234', done)
+      })
+    })
+  })
+
+  describe('cacheControl', function () {
+    describe('when false', function () {
+      it('should not include Cache-Control', function (done) {
+        request(createServer(fixtures, {'cacheControl': false}))
+        .get('/nums')
+        .expect(shouldNotHaveHeader('Cache-Control'))
+        .expect(200, '123456789', done)
+      })
+
+      it('should ignore maxAge', function (done) {
+        request(createServer(fixtures, {'cacheControl': false, 'maxAge': 12000}))
+        .get('/nums')
+        .expect(shouldNotHaveHeader('Cache-Control'))
+        .expect(200, '123456789', done)
+      })
+    })
+
+    describe('when true', function () {
+      it('should include Cache-Control', function (done) {
+        request(createServer(fixtures, {'cacheControl': true}))
+        .get('/nums')
+        .expect('Cache-Control', 'public, max-age=0')
+        .expect(200, '123456789', done)
+      })
+    })
+  })
+
   describe('extensions', function () {
     it('should be not be enabled by default', function (done) {
       var server = createServer(fixtures)
@@ -478,7 +543,7 @@ describe('serveStatic()', function () {
     })
   })
 
-  describe('Range', function () {
+  describe('when request has "Range" header', function () {
     var server
     before(function () {
       server = createServer()

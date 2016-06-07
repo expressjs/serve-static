@@ -1,3 +1,19 @@
+unreleased
+==========
+
+  * deps: send@0.14.0
+    - Add `acceptRanges` option
+    - Add `cacheControl` option
+    - Attempt to combine multiple ranges into single range
+    - Correctly inherit from `Stream` class
+    - Fix `Content-Range` header in 416 responses when using `start`/`end` options
+    - Fix `Content-Range` header missing from default 416 responses
+    - Ignore non-byte `Range` headers
+    - deps: http-errors@~1.5.0
+    - deps: range-parser@~1.2.0
+    - deps: statuses@~1.3.0
+    - perf: remove argument reassignment
+
 1.10.3 / 2016-05-30
 ===================
 
