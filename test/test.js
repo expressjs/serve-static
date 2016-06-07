@@ -559,7 +559,7 @@ describe('serveStatic()', function () {
         .expect(416, done)
       })
 
-      it('should include a Content-Range field with a byte-range- resp-spec of "*" and an instance-length specifying the current length', function (done) {
+      it('should include a Content-Range header of complete length', function (done) {
         request(server)
         .get('/nums')
         .set('Range', 'bytes=9-50')
