@@ -1,5 +1,5 @@
-unreleased
-==========
+1.11.0 / 2016-06-07
+===================
 
   * Use status code 301 for redirects
   * deps: send@0.14.0
