@@ -131,9 +131,8 @@ var serveStatic = require('serve-static')
 var serve = serveStatic('public/ftp', {'index': ['index.html', 'index.htm']})
 
 // Create server
-var server = http.createServer(function(req, res){
-  var done = finalhandler(req, res)
-  serve(req, res, done)
+var server = http.createServer(function onRequest (req, res) {
+  serve(req, res, finalhandler(req, res))
 })
 
 // Listen
@@ -160,9 +159,8 @@ function setHeaders(res, path) {
 }
 
 // Create server
-var server = http.createServer(function(req, res){
-  var done = finalhandler(req, res)
-  serve(req, res, done)
+var server = http.createServer(function onRequest (req, res) {
+  serve(req, res, finalhandler(req, res))
 })
 
 // Listen
@@ -221,7 +219,7 @@ app.use(serveStatic(__dirname + '/public', {
 
 app.listen(3000)
 
-function setCustomCacheControl(res, path) {
+function setCustomCacheControl (res, path) {
   if (serveStatic.mime.lookup(path) === 'text/html') {
     // Custom Cache-Control for HTML files
     res.setHeader('Cache-Control', 'public, max-age=0')
