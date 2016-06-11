@@ -1,5 +1,5 @@
-unreleased
-==========
+1.11.1 / 2016-06-10
+===================
 
   * Fix redirect error when `req.url` contains raw non-URL characters
   * deps: send@0.14.1
