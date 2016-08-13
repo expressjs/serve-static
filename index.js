@@ -53,6 +53,9 @@ function serveStatic (root, options) {
   // default redirect
   var redirect = opts.redirect !== false
 
+  // default allowPost
+  var allowPost = !!opts.allowPost
+
   // headers listener
   var setHeaders = opts.setHeaders
 
@@ -70,14 +73,14 @@ function serveStatic (root, options) {
     : createNotFoundDirectoryListener()
 
   return function serveStatic (req, res, next) {
-    if (req.method !== 'GET' && req.method !== 'HEAD') {
+    if (req.method !== 'GET' && req.method !== 'HEAD' && (!allowPost || req.method !== 'POST')) {
       if (fallthrough) {
         return next()
       }
 
       // method not allowed
       res.statusCode = 405
-      res.setHeader('Allow', 'GET, HEAD')
+      res.setHeader('Allow', 'GET, HEAD' + (allowPost ? ', POST' : ''))
       res.setHeader('Content-Length', '0')
       res.end()
       return

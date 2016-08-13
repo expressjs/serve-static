@@ -383,6 +383,33 @@ describe('serveStatic()', function () {
     })
   })
 
+  describe('allowPost', function () {
+    it('when undefined', function (done) {
+      request(createServer(fixtures))
+      .post('/todo.txt')
+      .expect(404, done)
+    })
+
+    it('when true', function (done) {
+      request(createServer(fixtures, {
+        allowPost: true
+      }))
+      .post('/todo.txt')
+      .expect(function (resp) {
+        assert.equal(resp.text, '- groceries')
+      })
+      .expect(200, done)
+    })
+
+    it('when false', function (done) {
+      request(createServer(fixtures, {
+        allowPost: false
+      }))
+      .post('/todo.txt')
+      .expect(404, done)
+    })
+  })
+
   describe('hidden files', function () {
     var server
     before(function () {
