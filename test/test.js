@@ -445,6 +445,26 @@ describe('serveStatic()', function () {
 
   })
 
+  describe('allowPost', function () {
+    var server
+    before(function () {
+      server = createServer(fixtures, {
+        allowPost : true
+      })
+    })
+
+    it('when true', function (done) {
+      request(server)
+      .post('/todo.txt')
+      .expect(function (resp) {
+        assert.equal(resp.text, '- groceries');
+      })
+      .expect(200, done)
+    })
+
+
+  })
+
   describe('hidden files', function () {
     var server
     before(function () {
