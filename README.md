@@ -91,6 +91,9 @@ The default value is `true`.
 
 Set the url prefix of static files.
 
+##### allowPost
+
+Allow POST method request.
 
 ##### index
 
