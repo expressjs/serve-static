@@ -387,7 +387,7 @@ describe('serveStatic()', function () {
     var server
     before(function () {
       server = createServer(fixtures, {
-        staticPath : '/static_path'
+        staticPath: '/static_path'
       })
     })
 
@@ -395,7 +395,7 @@ describe('serveStatic()', function () {
       request(server)
       .get('/static_path/todo.txt')
       .expect(function (resp) {
-        assert.equal(resp.text, '- groceries');
+        assert.equal(resp.text, '- groceries')
       })
       .expect(200, done)
     })
@@ -420,52 +420,49 @@ describe('serveStatic()', function () {
 
     before(function () {
       server = createServer(fixtures, {
-        staticPath : 'static_path'
+        staticPath: 'static_path'
       })
     })
     it('be short of / ', function (done) {
       request(server)
       .get('/static_path/todo.txt')
       .expect(function (resp) {
-        assert.equal(resp.text, '- groceries');
+        assert.equal(resp.text, '- groceries')
       })
-      .expect(200, done)     
+      .expect(200, done)
     })
 
     it('more level path', function (done) {
       request(createServer(fixtures, {
-        staticPath : '/aaa/bbb/ddd'
+        staticPath: '/aaa/bbb/ddd'
       }))
       .get('/aaa/bbb/ddd/todo.txt')
       .expect(function (resp) {
-        assert.equal(resp.text, '- groceries');
+        assert.equal(resp.text, '- groceries')
       })
-      .expect(200, done)     
+      .expect(200, done)
     })
-
   })
 
   describe('allowPost', function () {
-
     it('when true', function (done) {
       request(createServer(fixtures, {
-        allowPost : true
+        allowPost: true
       }))
       .post('/todo.txt')
       .expect(function (resp) {
-        assert.equal(resp.text, '- groceries');
+        assert.equal(resp.text, '- groceries')
       })
       .expect(200, done)
     })
 
     it('when false', function (done) {
       request(createServer(fixtures, {
-        allowPost : false
+        allowPost: false
       }))
       .post('/todo.txt')
       .expect(404, done)
     })
-
   })
 
   describe('hidden files', function () {

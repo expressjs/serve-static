@@ -56,9 +56,9 @@ function serveStatic (root, options) {
 
   // default staticPath
   var staticPath = false
-  if(opts.staticPath) {
+  if (opts.staticPath) {
     staticPath = opts.staticPath
-    if(staticPath[0] !== '/') {
+    if (staticPath[0] !== '/') {
       staticPath = '/' + staticPath
     }
   }
@@ -104,14 +104,13 @@ function serveStatic (root, options) {
     if (path === '/' && originalUrl.pathname.substr(-1) !== '/') {
       path = ''
     }
-    if(staticPath) {
-      var newPath = relative(staticPath, path);
-      if(newPath[0] === '.') {
+    if (staticPath) {
+      var newPath = relative(staticPath, path)
+      if (newPath[0] === '.') {
         res.statusCode = 404
-        next()
-        return 
-      }else{
-        path = '/' + newPath;
+        return next()
+      } else {
+        path = '/' + newPath
       }
     }
 
