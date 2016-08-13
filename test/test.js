@@ -383,6 +383,68 @@ describe('serveStatic()', function () {
     })
   })
 
+  describe('staticPath', function () {
+    var server
+    before(function () {
+      server = createServer(fixtures, {
+        staticPath : '/static_path'
+      })
+    })
+
+    it('when not null & match', function (done) {
+      request(server)
+      .get('/static_path/todo.txt')
+      .expect(function (resp) {
+        assert.equal(resp.text, '- groceries');
+      })
+      .expect(200, done)
+    })
+
+    it('when not null & not match at static path', function (done) {
+      request(server)
+      .get('/static_path/null.txt')
+      .expect(404, done)
+    })
+
+    it('when not null & not match', function (done) {
+      request(server)
+      .get('/todo.txt')
+      .expect(404, done)
+    })
+
+    it('when not null & more level path & not match', function (done) {
+      request(server)
+      .get('/users/tobi.txt')
+      .expect(404, done)
+    })
+
+    before(function () {
+      server = createServer(fixtures, {
+        staticPath : 'static_path'
+      })
+    })
+    it('be short of / ', function (done) {
+      request(server)
+      .get('/static_path/todo.txt')
+      .expect(function (resp) {
+        assert.equal(resp.text, '- groceries');
+      })
+      .expect(200, done)     
+    })
+
+    it('more level path', function (done) {
+      request(createServer(fixtures, {
+        staticPath : '/aaa/bbb/ddd'
+      }))
+      .get('/aaa/bbb/ddd/todo.txt')
+      .expect(function (resp) {
+        assert.equal(resp.text, '- groceries');
+      })
+      .expect(200, done)     
+    })
+
+  })
+
   describe('hidden files', function () {
     var server
     before(function () {

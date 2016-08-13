@@ -17,6 +17,7 @@ var encodeUrl = require('encodeurl')
 var escapeHtml = require('escape-html')
 var parseUrl = require('parseurl')
 var resolve = require('path').resolve
+var relative = require('path').relative
 var send = require('send')
 var url = require('url')
 
@@ -52,6 +53,15 @@ function serveStatic (root, options) {
 
   // default redirect
   var redirect = opts.redirect !== false
+
+  // default staticPath
+  var staticPath = false
+  if(opts.staticPath) {
+    staticPath = opts.staticPath
+    if(staticPath[0] !== '/') {
+      staticPath = '/' + staticPath
+    }
+  }
 
   // headers listener
   var setHeaders = opts.setHeaders
@@ -90,6 +100,16 @@ function serveStatic (root, options) {
     // make sure redirect occurs at mount
     if (path === '/' && originalUrl.pathname.substr(-1) !== '/') {
       path = ''
+    }
+    if(staticPath) {
+      var newPath = relative(staticPath, path);
+      if(newPath[0] === '.') {
+        res.statusCode = 404
+        next()
+        return ;
+      }else{
+        path = '/' + newPath;
+      }
     }
 
     // create send stream

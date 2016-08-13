@@ -1,4 +1,4 @@
-# serve-static
+​# serve-static
 
 [![NPM Version][npm-image]][npm-url]
 [![NPM Downloads][downloads-image]][downloads-url]
@@ -86,6 +86,11 @@ short-circuiting 404s for less overhead. This middleware will also reply to
 all methods.
 
 The default value is `true`.
+
+##### staticPath
+
+Set the url prefix of static files.
+
 
 ##### index
 
@@ -181,6 +186,11 @@ var app = express()
 
 app.use(serveStatic('public/ftp', {'index': ['default.html', 'default.htm']}))
 app.listen(3000)
+```
+
+If visit url : ```/static/**/*``` want to get files : ```public/resource/**/*```
+```js
+app.use(serveStatic('public/resource', {staticPath : '/static'}))
 ```
 
 #### Multiple roots
