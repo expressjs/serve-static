@@ -19,6 +19,7 @@ var parseUrl = require('parseurl')
 var resolve = require('path').resolve
 var send = require('send')
 var url = require('url')
+var createError = require('http-errors')
 
 /**
  * Module exports.
@@ -40,8 +41,8 @@ function serveStatic (root, options) {
     throw new TypeError('root path required')
   }
 
-  if (typeof root !== 'string') {
-    throw new TypeError('root path must be a string')
+  if (typeof root !== 'string' && typeof root !== 'function') {
+    throw new TypeError('root path must be a string or a function')
   }
 
   // copy options object
@@ -62,7 +63,6 @@ function serveStatic (root, options) {
 
   // setup options for send
   opts.maxage = opts.maxage || opts.maxAge || 0
-  opts.root = resolve(root)
 
   // construct directory listener
   var onDirectory = redirect
@@ -92,8 +92,32 @@ function serveStatic (root, options) {
       path = ''
     }
 
+    // create send options
+    var sendOpts = Object.create(opts)
+    var _root
+    if (typeof root === 'function') {
+      try {
+        _root = root(req)
+      } catch (e) {
+        next(e)
+        return
+      }
+    } else {
+      _root = root
+    }
+
+    if (!_root) {
+      // ignore fallthrough option
+      // as this should be considered a major error
+      var error = createError(404)
+      next(error)
+      return
+    }
+
+    sendOpts.root = resolve(_root);
+
     // create send stream
-    var stream = send(req, path, opts)
+    var stream = send(req, path, sendOpts)
 
     // add directory handler
     stream.on('directory', onDirectory)
