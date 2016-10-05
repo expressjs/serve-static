@@ -757,14 +757,12 @@ describe('serveStatic()', function () {
   describe('when `root` option is a function', function () {
     var server
     before(function () {
-
       var userRoots = {
         'tobi': 'tobi-dir',
-        'loki': 'loki-dir',
-      };
+        'loki': 'loki-dir'
+      }
 
-      server = createServer(function getRoot(req) {
-
+      server = createServer(function getRoot (req) {
         var userId = req.headers['x-user-id']
 
         if (userId === 'throw-error') {
@@ -784,11 +782,11 @@ describe('serveStatic()', function () {
       .expect(200, 'tobi', done)
     })
 
-    it('should 404 if the getRoot(req) function returns a falsey value', function (done) {
+    it('should 500 if the getRoot(req) function returns a falsey value', function (done) {
       request(server)
       .get('/me.txt')
       .set('X-User-Id', 'not-tobi-nor-loki')
-      .expect(404, done)
+      .expect(500, done)
     })
 
     it('should 500 in case the getRoot(req) function throws a custom error', function (done) {

@@ -13,13 +13,13 @@
  * @private
  */
 
+var createError = require('http-errors')
 var encodeUrl = require('encodeurl')
 var escapeHtml = require('escape-html')
 var parseUrl = require('parseurl')
 var resolve = require('path').resolve
 var send = require('send')
 var url = require('url')
-var createError = require('http-errors')
 
 /**
  * Module exports.
@@ -69,6 +69,16 @@ function serveStatic (root, options) {
     ? createRedirectDirectoryListener()
     : createNotFoundDirectoryListener()
 
+  // auxiliary function that retrieves the root path
+  // for the request in case the root option is a function
+  function getRoot(req, next) {
+    try {
+      return root(req)
+    } catch (e) {
+      next(e)
+    }
+  }
+
   return function serveStatic (req, res, next) {
     if (req.method !== 'GET' && req.method !== 'HEAD') {
       if (fallthrough) {
@@ -96,12 +106,7 @@ function serveStatic (root, options) {
     var sendOpts = Object.create(opts)
     var _root
     if (typeof root === 'function') {
-      try {
-        _root = root(req)
-      } catch (e) {
-        next(e)
-        return
-      }
+      _root = getRoot(req, next)
     } else {
       _root = root
     }
@@ -109,7 +114,7 @@ function serveStatic (root, options) {
     if (!_root) {
       // ignore fallthrough option
       // as this should be considered a major error
-      var error = createError(404)
+      var error = createError(500, 'could not retrieve a root for the request');
       next(error)
       return
     }
