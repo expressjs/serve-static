@@ -60,6 +60,9 @@ function serveStatic (root, options) {
     throw new TypeError('option setHeaders must be function')
   }
 
+  // Filter function
+  var filterFunc = opts.filter || function() { return true }
+
   // setup options for send
   opts.maxage = opts.maxage || opts.maxAge || 0
   opts.root = resolve(root)
@@ -90,6 +93,10 @@ function serveStatic (root, options) {
     // make sure redirect occurs at mount
     if (path === '/' && originalUrl.pathname.substr(-1) !== '/') {
       path = ''
+    }
+
+    if (!filterFunc(path, originalUrl)) {
+      return next();
     }
 
     // create send stream
