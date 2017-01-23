@@ -1,3 +1,11 @@
+unreleased
+==========
+
+  * deps: send@0.14.2
+    - deps: http-errors@~1.5.1
+    - deps: ms@0.7.2
+    - deps: statuses@~1.3.1
+
 1.11.1 / 2016-06-10
 ===================
 
