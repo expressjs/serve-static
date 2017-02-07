@@ -93,13 +93,13 @@ function serveStatic (root, options) {
     }
 
     if (path.match(/^\/\./)) {
-      if (opts.dotfiles == "deny") {
-        var err = new Error();
-        err.status = 403;
+      var err = new Error()
+
+      if (opts.dotfiles === 'deny') {
+        err.status = 403
         return next(err)
-      } else if (opts.dotfiles == "ignore") {
-        var err = new Error();
-        err.status = 404;
+      } else if (opts.dotfiles === 'ignore') {
+        err.status = 404
         return next(err)
       }
     }
