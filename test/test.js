@@ -385,14 +385,26 @@ describe('serveStatic()', function () {
 
   describe('hidden files', function () {
     var server
-    before(function () {
-      server = createServer(fixtures, {'dotfiles': 'allow'})
-    })
 
     it('should be served when dotfiles: "allow" is given', function (done) {
+      server = createServer(fixtures, {'dotfiles': 'allow'})
       request(server)
       .get('/.hidden')
       .expect(200, 'I am hidden', done)
+    })
+
+    it('should return 403 when dotfiles: "deny" is given', function (done) {
+      server = createServer(fixtures, {'dotfiles': 'deny'})
+      request(server)
+      .get('/.hidden')
+      .expect(403, done)
+    })
+
+    it('should return 404 when dotfiles: "ignore" is given', function (done) {
+      server = createServer(fixtures, {'dotfiles': 'ignore'})
+      request(server)
+      .get('/.hidden')
+      .expect(404, done)
     })
   })
 
