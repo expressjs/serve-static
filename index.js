@@ -179,7 +179,7 @@ function createNotFoundDirectoryListener () {
  */
 
 function createRedirectDirectoryListener () {
-  return function redirect () {
+  return function redirect (res) {
     if (this.hasTrailingSlash()) {
       this.error(404)
       return
@@ -196,7 +196,6 @@ function createRedirectDirectoryListener () {
     var loc = encodeUrl(url.format(originalUrl))
     var doc = createHtmlDocument('Redirecting', 'Redirecting to <a href="' + escapeHtml(loc) + '">' +
       escapeHtml(loc) + '</a>')
-    var res = this.res
 
     // send redirect response
     res.statusCode = 301

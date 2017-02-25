@@ -108,6 +108,13 @@ describe('serveStatic()', function () {
       })
     })
 
+    it('should support precondition checks', function (done) {
+      request(server)
+      .get('/todo.txt')
+      .set('If-Match', '"foo"')
+      .expect(412, done)
+    })
+
     it('should serve zero-length files', function (done) {
       request(server)
       .get('/empty.txt')
