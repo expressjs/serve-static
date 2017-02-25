@@ -476,6 +476,13 @@ describe('serveStatic()', function () {
       .expect(301, 'Redirecting to <a href="/snow%20%E2%98%83/">/snow%20%E2%98%83/</a>\n', done)
     })
 
+    it('should respond with default Content-Security-Policy', function (done) {
+      request(server)
+      .get('/users')
+      .expect('Content-Security-Policy', "default-src 'self'")
+      .expect(301, done)
+    })
+
     it('should not redirect incorrectly', function (done) {
       request(server)
       .get('/')

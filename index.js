@@ -181,6 +181,7 @@ function createRedirectDirectoryListener () {
     res.statusCode = 301
     res.setHeader('Content-Type', 'text/html; charset=UTF-8')
     res.setHeader('Content-Length', Buffer.byteLength(msg))
+    res.setHeader('Content-Security-Policy', "default-src 'self'")
     res.setHeader('X-Content-Type-Options', 'nosniff')
     res.setHeader('Location', loc)
     res.end(msg)

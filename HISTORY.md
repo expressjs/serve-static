@@ -1,3 +1,8 @@
+unreleased
+==========
+
+  * Set default CSP header in redirect response
+
 1.11.2 / 2017-01-23
 ===================
 
