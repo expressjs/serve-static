@@ -1,5 +1,5 @@
-unreleased
-==========
+1.12.0 / 2017-02-5
+===================
 
   * Send complete HTML document in redirect response
   * Set default CSP header in redirect response
