@@ -1,4 +1,4 @@
-1.12.0 / 2017-02-5
+1.12.0 / 2017-02-25
 ===================
 
   * Send complete HTML document in redirect response
