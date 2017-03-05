@@ -427,14 +427,14 @@ describe('serveStatic()', function () {
     it('should accept string', function (done) {
       request(createServer(fixtures, {'maxAge': '30d'}))
       .get('/todo.txt')
-      .expect('cache-control', 'public, max-age=' + 60 * 60 * 24 * 30)
+      .expect('cache-control', 'public, max-age=' + (60 * 60 * 24 * 30))
       .expect(200, done)
     })
 
     it('should be reasonable when infinite', function (done) {
       request(createServer(fixtures, {'maxAge': Infinity}))
       .get('/todo.txt')
-      .expect('cache-control', 'public, max-age=' + 60 * 60 * 24 * 365)
+      .expect('cache-control', 'public, max-age=' + (60 * 60 * 24 * 365))
       .expect(200, done)
     })
   })
