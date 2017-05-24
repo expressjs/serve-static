@@ -93,6 +93,14 @@ all methods.
 
 The default value is `true`.
 
+##### staticPath
+
+Set the url prefix of static files.
+
+##### allowPost
+
+Allow POST method request.
+
 ##### index
 
 By default this module will send "index.html" files in response to a request
@@ -187,6 +195,11 @@ var app = express()
 
 app.use(serveStatic('public/ftp', {'index': ['default.html', 'default.htm']}))
 app.listen(3000)
+```
+
+If visit url : ```/static/**/*``` want to get files : ```public/resource/**/*```
+```js
+app.use(serveStatic('public/resource', {staticPath : '/static'}))
 ```
 
 #### Multiple roots
