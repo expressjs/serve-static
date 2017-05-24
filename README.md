@@ -93,6 +93,10 @@ all methods.
 
 The default value is `true`.
 
+##### allowPost
+
+Allow POST method request.
+
 ##### index
 
 By default this module will send "index.html" files in response to a request
