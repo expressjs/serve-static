@@ -13,6 +13,7 @@
  * @private
  */
 
+var createError = require('http-errors')
 var encodeUrl = require('encodeurl')
 var escapeHtml = require('escape-html')
 var parseUrl = require('parseurl')
@@ -40,8 +41,8 @@ function serveStatic (root, options) {
     throw new TypeError('root path required')
   }
 
-  if (typeof root !== 'string') {
-    throw new TypeError('root path must be a string')
+  if (typeof root !== 'string' && typeof root !== 'function') {
+    throw new TypeError('root path must be a string or a function')
   }
 
   // copy options object
@@ -62,12 +63,21 @@ function serveStatic (root, options) {
 
   // setup options for send
   opts.maxage = opts.maxage || opts.maxAge || 0
-  opts.root = resolve(root)
 
   // construct directory listener
   var onDirectory = redirect
     ? createRedirectDirectoryListener()
     : createNotFoundDirectoryListener()
+
+  // auxiliary function that retrieves the root path
+  // for the request in case the root option is a function
+  function getRoot(req, next) {
+    try {
+      return root(req)
+    } catch (e) {
+      next(e)
+    }
+  }
 
   return function serveStatic (req, res, next) {
     if (req.method !== 'GET' && req.method !== 'HEAD') {
@@ -92,8 +102,27 @@ function serveStatic (root, options) {
       path = ''
     }
 
+    // create send options
+    var sendOpts = Object.create(opts)
+    var _root
+    if (typeof root === 'function') {
+      _root = getRoot(req, next)
+    } else {
+      _root = root
+    }
+
+    if (!_root) {
+      // ignore fallthrough option
+      // as this should be considered a major error
+      var error = createError(500, 'could not retrieve a root for the request');
+      next(error)
+      return
+    }
+
+    sendOpts.root = resolve(_root);
+
     // create send stream
-    var stream = send(req, path, opts)
+    var stream = send(req, path, sendOpts)
 
     // add directory handler
     stream.on('directory', onDirectory)

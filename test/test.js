@@ -21,8 +21,8 @@ describe('serveStatic()', function () {
       assert.throws(serveStatic.bind(), /root path required/)
     })
 
-    it('should require root path to be string', function () {
-      assert.throws(serveStatic.bind(null, 42), /root path.*string/)
+    it('should require root path to be string or function', function () {
+      assert.throws(serveStatic.bind(null, 42), /root path.*string or a function/)
     })
 
     it('should serve static files', function (done) {
@@ -765,6 +765,49 @@ describe('serveStatic()', function () {
       .get('/static')
       .expect('Location', '/static/')
       .expect(301, done)
+    })
+  })
+
+  describe('when `root` option is a function', function () {
+    var server
+    before(function () {
+      var userRoots = {
+        'tobi': 'tobi-dir',
+        'loki': 'loki-dir'
+      }
+
+      server = createServer(function getRoot (req) {
+        var userId = req.headers['x-user-id']
+
+        if (userId === 'throw-error') {
+          throw new Error('some custom error')
+        }
+
+        var userRoot = userRoots[userId]
+
+        return userRoot ? path.join(fixtures, 'user-roots', userRoot) : false
+      })
+    })
+
+    it('should evaluate the root against the req object', function (done) {
+      request(server)
+      .get('/me.txt')
+      .set('X-User-Id', 'tobi')
+      .expect(200, 'tobi', done)
+    })
+
+    it('should 500 if the getRoot(req) function returns a falsey value', function (done) {
+      request(server)
+      .get('/me.txt')
+      .set('X-User-Id', 'not-tobi-nor-loki')
+      .expect(500, done)
+    })
+
+    it('should 500 in case the getRoot(req) function throws a custom error', function (done) {
+      request(server)
+      .get('/me.txt')
+      .set('X-User-Id', 'throw-error')
+      .expect(500, done)
     })
   })
 })
