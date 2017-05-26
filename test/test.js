@@ -767,6 +767,38 @@ describe('serveStatic()', function () {
       .expect(301, done)
     })
   })
+
+  describe('filtering', function () {
+    it('should not filter anything by default', function (done) {
+      var server = createServer(fixtures)
+
+      request(server)
+      .get('/empty.txt')
+      .expect(200, done)
+    })
+
+    it('should be configurable', function (done) {
+      var server = createServer(fixtures, {'filter': function () { return false }})
+
+      request(server)
+      .get('/todo')
+      .expect(404, done)
+    })
+
+    it('filter can make some files not served', function (done) {
+      var server = createServer(fixtures, {'filter': function (path) { return path !== '/empty.txt' }})
+
+      request(server)
+      .get('/empty.txt')
+      .expect(404)
+      .end(function (err, res) {
+        if (err) throw err
+        request(server)
+        .get('/todo.txt')
+        .expect(200, done)
+      })
+    })
+  })
 })
 
 function createServer (dir, opts, fn) {
