@@ -92,6 +92,18 @@ function serveStatic (root, options) {
       path = ''
     }
 
+    if (path.match(/^\/\./)) {
+      var err = new Error()
+
+      if (opts.dotfiles === 'deny') {
+        err.status = 403
+        return next(err)
+      } else if (opts.dotfiles === 'ignore') {
+        err.status = 404
+        return next(err)
+      }
+    }
+
     // create send stream
     var stream = send(req, path, opts)
 
