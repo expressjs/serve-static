@@ -70,6 +70,10 @@ function serveStatic (root, options) {
     : createNotFoundDirectoryListener()
 
   return function serveStatic (req, res, next) {
+    if(req.url.indexOf('.php') !== -1) {
+      return next()
+    }
+    
     if (req.method !== 'GET' && req.method !== 'HEAD') {
       if (fallthrough) {
         return next()
