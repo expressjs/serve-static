@@ -4,7 +4,7 @@
   "version": "1.12.3",
   "author": "Douglas Christopher Wilson <doug@somethingdoug.com>",
   "license": "MIT",
-  "repository": "expressjs/serve-static",
+  "repository": "riichg5/serve-static",
   "dependencies": {
     "encodeurl": "~1.0.1",
     "escape-html": "~1.0.3",
