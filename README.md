@@ -124,6 +124,10 @@ the arguments are:
   - `path` the file path that is being sent
   - `stat` the stat object of the file that is being sent
 
+##### prefix
+
+String or Function to set prefix for file serving. Default to ``
+
 ## Examples
 
 ### Serve files with vanilla node.js http server
@@ -232,6 +236,32 @@ function setCustomCacheControl (res, path) {
     // Custom Cache-Control for HTML files
     res.setHeader('Cache-Control', 'public, max-age=0')
   }
+}
+```
+
+#### Dynamic Prefixing
+
+This example shows how to set a dynamic prefix depending on the user agent.
+
+```js
+var express = require('express')
+var serveStatic = require('serve-static')
+
+var app = express()
+
+app.use(serveStatic( resolvePath( '/build', {
+  prefix: rootByUserAgent
+}));
+
+app.listen(3000)
+
+function rootByUserAgent(req) {
+  var userAgent = req.get('user-agent');
+  // test user-agent for 'Internet Explorer'
+  if ((userAgent.match(/(MSIE)/i) || userAgent.match(/(Trident)/i)) && !userAgent.match(/(Edge)/i)) {
+    return '/build/compiled'
+  }
+  return '/build/bundled';
 }
 ```
 

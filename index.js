@@ -60,6 +60,9 @@ function serveStatic (root, options) {
     throw new TypeError('option setHeaders must be function')
   }
 
+  // prefix options
+  var prefixPath = createPrefixFunction(opts.prefix || '');
+
   // setup options for send
   opts.maxage = opts.maxage || opts.maxAge || 0
   opts.root = resolve(root)
@@ -85,7 +88,7 @@ function serveStatic (root, options) {
 
     var forwardError = !fallthrough
     var originalUrl = parseUrl.original(req)
-    var path = parseUrl(req).pathname
+    var path = prefixPath(req) + parseUrl(req).pathname
 
     // make sure redirect occurs at mount
     if (path === '/' && originalUrl.pathname.substr(-1) !== '/') {
@@ -205,5 +208,18 @@ function createRedirectDirectoryListener () {
     res.setHeader('X-Content-Type-Options', 'nosniff')
     res.setHeader('Location', loc)
     res.end(doc)
+  }
+}
+
+/**
+ * Create a prefix function
+ * @private
+ */
+function createPrefixFunction(arg) {
+  if (typeof arg === 'function') {
+    return arg;
+  }
+  return function() {
+    return arg;
   }
 }
