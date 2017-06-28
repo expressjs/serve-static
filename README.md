@@ -249,19 +249,19 @@ var serveStatic = require('serve-static')
 
 var app = express()
 
-app.use(serveStatic( resolvePath( '/build', {
+app.use(serveStatic('/build', {
   prefix: rootByUserAgent
-}));
+}))
 
 app.listen(3000)
 
-function rootByUserAgent(req) {
-  var userAgent = req.get('user-agent');
+function rootByUserAgent (req) {
+  var userAgent = req.get('user-agent')
   // test user-agent for 'Internet Explorer'
-  if ((userAgent.match(/(MSIE)/i) || userAgent.match(/(Trident)/i)) && !userAgent.match(/(Edge)/i)) {
-    return '/build/compiled'
+  if (userAgent.match(/(MSIE)/i)) {
+    return '/compiled'
   }
-  return '/build/bundled';
+  return '/bundled'
 }
 ```
 

@@ -61,7 +61,7 @@ function serveStatic (root, options) {
   }
 
   // prefix options
-  var prefixPath = createPrefixFunction(opts.prefix || '');
+  var prefixPath = createPrefixFunction(opts.prefix || '')
 
   // setup options for send
   opts.maxage = opts.maxage || opts.maxAge || 0
@@ -215,11 +215,11 @@ function createRedirectDirectoryListener () {
  * Create a prefix function
  * @private
  */
-function createPrefixFunction(arg) {
+function createPrefixFunction (arg) {
   if (typeof arg === 'function') {
-    return arg;
+    return arg
   }
-  return function() {
-    return arg;
+  return function () {
+    return arg
   }
 }
