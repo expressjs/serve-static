@@ -60,6 +60,11 @@ function serveStatic (root, options) {
     throw new TypeError('option setHeaders must be function')
   }
 
+  let cache
+  if (opts.staticCache === true) {
+    cache = new Map()
+  }
+
   // setup options for send
   opts.maxage = opts.maxage || opts.maxAge || 0
   opts.root = resolve(root)
@@ -92,6 +97,11 @@ function serveStatic (root, options) {
       path = ''
     }
 
+    if (opts.staticCache && cache.has(path)) {
+      res.write(cache.get(path))
+      return res.end()
+    }
+
     // create send stream
     var stream = send(req, path, opts)
 
@@ -120,6 +130,20 @@ function serveStatic (root, options) {
 
       next()
     })
+
+    // generate cache if not already set
+    if (opts.staticCache && !cache.has(path)) {
+      stream.on('stream', function dataStreamHandler (readStream) {
+        const buffers = []
+        readStream.on('data', function readDataHandler (d) {
+          buffers.push(d)
+        })
+
+        readStream.on('end', function cacheEndHandler () {
+          cache.set(path, Buffer.concat(buffers))
+        })
+      })
+    }
 
     // pipe
     stream.pipe(res)
