@@ -4,6 +4,7 @@ unreleased
   * deps: send@0.15.6
     - deps: debug@2.6.9
     - perf: improve `If-Match` token parsing
+  * perf: improve slash collapsing
 
 1.12.5 / 2017-09-21
 ===================
