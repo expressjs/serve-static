@@ -1,5 +1,5 @@
-unreleased
-==========
+1.13.0 / 2017-09-27
+===================
 
   * deps: send@0.16.0
     - Add 70 new types for file extensions
