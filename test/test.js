@@ -722,6 +722,34 @@ describe('serveStatic()', function () {
     })
   })
 
+  //
+  // NOTE: This is not a real part of the API, but
+  //       over time this has become something users
+  //       are doing, so this will prevent unseen
+  //       regressions around this use-case.
+  //
+  describe('when mounted "root" as a file', function () {
+    var server
+    before(function () {
+      server = createServer(fixtures + '/todo.txt', null, function (req) {
+        req.originalUrl = req.url
+        req.url = '/' + req.url.split('/').slice(2).join('/')
+      })
+    })
+
+    it('should load the file when on trailing slash', function (done) {
+      request(server)
+      .get('/todo')
+      .expect(200, '- groceries', done)
+    })
+
+    it('should 404 when trailing slash', function (done) {
+      request(server)
+      .get('/todo/')
+      .expect(404, done)
+    })
+  })
+
   describe('when responding non-2xx or 304', function () {
     var server
     before(function () {
