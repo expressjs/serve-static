@@ -1,5 +1,5 @@
-unreleased
-==========
+1.13.1 / 2017-09-29
+===================
 
   * Fix regression when `root` is incorrectly set to a file
   * deps: send@0.16.1
