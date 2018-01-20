@@ -1,10 +1,10 @@
 unreleased
 ==========
 
+  * Fix incorrect end tag in redirects
   * deps: encodeurl@~1.0.2
     - Fix encoding `%` as last character
   * deps: send@0.16.2
-    - Fix incorrect end tag in default error & redirects
     - deps: depd@~1.1.2
     - deps: encodeurl@~1.0.2
     - deps: statuses@~1.4.0
