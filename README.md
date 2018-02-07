@@ -95,7 +95,7 @@ The default value is `true`.
 
 ##### immutable
 
-Enable or diable the `immutable` directive in the `Cache-Control` response
+Enable or disable the `immutable` directive in the `Cache-Control` response
 header, defaults to `false`. If set to `true`, the `maxAge` option should
 also be specified to enable caching. The `immutable` directive will prevent
 supported clients from making conditional requests during the life of the
