@@ -1,5 +1,5 @@
-unreleased
-==========
+1.13.2 / 2018-02-07
+===================
 
   * Fix incorrect end tag in redirects
   * deps: encodeurl@~1.0.2
