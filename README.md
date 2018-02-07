@@ -5,7 +5,6 @@
 [![Linux Build][travis-image]][travis-url]
 [![Windows Build][appveyor-image]][appveyor-url]
 [![Test Coverage][coveralls-image]][coveralls-url]
-[![Gratipay][gratipay-image]][gratipay-url]
 
 ## Install
 
@@ -257,5 +256,3 @@ function setCustomCacheControl (res, path) {
 [coveralls-url]: https://coveralls.io/r/expressjs/serve-static
 [downloads-image]: https://img.shields.io/npm/dm/serve-static.svg
 [downloads-url]: https://npmjs.org/package/serve-static
-[gratipay-image]: https://img.shields.io/gratipay/dougwilson.svg
-[gratipay-url]: https://gratipay.com/dougwilson/
