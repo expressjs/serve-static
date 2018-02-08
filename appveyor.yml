@@ -17,6 +17,7 @@ install:
   - ps: Install-Product node $env:nodejs_version
   - npm config set shrinkwrap false
   - if "%nodejs_version%" equ "0.8" npm rm --save-dev istanbul
+  - if "%nodejs_version%" equ "0.8" npm config set strict-ssl false
   - for /f tokens^=2^ delims^=^" %%m in ('findstr /r /c:"eslint[^ ]" package.json') do call npm rm --save-dev %%m
   - if exist node_modules npm prune
   - if exist node_modules npm rebuild
