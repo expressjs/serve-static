@@ -8,13 +8,15 @@ environment:
     - nodejs_version: "3.3"
     - nodejs_version: "4.8"
     - nodejs_version: "5.12"
-    - nodejs_version: "6.11"
+    - nodejs_version: "6.12"
     - nodejs_version: "7.10"
     - nodejs_version: "8.9"
 cache:
   - node_modules
 install:
-  - ps: Install-Product node $env:nodejs_version
+  - ps: >-
+      try { Install-Product node $env:nodejs_version -ErrorAction Stop }
+      catch { Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version) }
   - npm config set shrinkwrap false
   - if "%nodejs_version%" equ "0.8" npm rm --save-dev istanbul
   - if "%nodejs_version%" equ "0.8" npm config set strict-ssl false
