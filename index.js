@@ -118,7 +118,7 @@ function serveStatic (root, options) {
         return
       }
 
-      next()
+      next && next()
     })
 
     // pipe
