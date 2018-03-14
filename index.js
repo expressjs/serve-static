@@ -142,7 +142,7 @@ function collapseLeadingSlashes (str) {
     : str
 }
 
- /**
+/**
  * Create a minimal HTML document.
  *
  * @param {string} title
