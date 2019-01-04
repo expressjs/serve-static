@@ -4,6 +4,7 @@ var http = require('http')
 var path = require('path')
 var request = require('supertest')
 var serveStatic = require('..')
+var fs = require('fs')
 
 var fixtures = path.join(__dirname, '/fixtures')
 var relative = path.relative(process.cwd(), fixtures)
@@ -560,6 +561,50 @@ describe('serveStatic()', function () {
       .get('/users')
       .expect(shouldNotHaveHeader('x-custom'))
       .expect(301, done)
+    })
+  })
+
+  describe('caseSensitive', function () {
+    describe('default (false)', function () {
+      var server
+      var isFileSystemCaseSensitive = fs.existsSync(path.join(fixtures, 'NUMS')) === false
+      before(function () {
+        server = createServer(fixtures)
+      })
+      it('should return the file when matching case', function (done) {
+        request(server)
+                  .get('/nums')
+                  .expect(200, '123456789', done)
+      })
+      if (isFileSystemCaseSensitive) {
+        it('should not return the file on case sensitiv file systems when case not matched', function (done) {
+          request(server)
+                .get('/NuMs')
+                .expect(404, 'sorry!', done)
+        })
+      } else {
+        it('should return the file on case insensitiv file systems', function (done) {
+          request(server)
+                  .get('/NuMs')
+                  .expect(200, '123456789', done)
+        })
+      }
+    })
+    describe('when true', function () {
+      var server
+      before(function () {
+        server = createServer(fixtures, {'caseSensitive': true})
+      })
+      it('should return the file with matching case', function (done) {
+        request(server)
+                  .get('/nums')
+                  .expect(200, '123456789', done)
+      })
+      it('should not return the file with none matching case', function (done) {
+        request(server)
+                  .get('/NuMs')
+                  .expect(404, 'sorry!', done)
+      })
     })
   })
 
