@@ -141,7 +141,7 @@ var http = require('http')
 var serveStatic = require('serve-static')
 
 // Serve up public/ftp folder
-var serve = serveStatic('public/ftp', {'index': ['index.html', 'index.htm']})
+var serve = serveStatic('public/ftp', { 'index': ['index.html', 'index.htm'] })
 
 // Create server
 var server = http.createServer(function onRequest (req, res) {
@@ -192,7 +192,7 @@ var serveStatic = require('serve-static')
 
 var app = express()
 
-app.use(serveStatic('public/ftp', {'index': ['default.html', 'default.htm']}))
+app.use(serveStatic('public/ftp', { 'index': ['default.html', 'default.htm'] }))
 app.listen(3000)
 ```
 
