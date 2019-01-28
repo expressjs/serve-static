@@ -15,21 +15,41 @@ environment:
 cache:
   - node_modules
 install:
+  # Install Node.js
   - ps: >-
       try { Install-Product node $env:nodejs_version -ErrorAction Stop }
       catch { Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version) }
-  - npm config set shrinkwrap false
-  - if "%nodejs_version%" equ "0.8" npm rm --save-dev istanbul
-  - if "%nodejs_version%" equ "0.8" npm config set strict-ssl false
-  - for /f tokens^=2^ delims^=^" %%m in ('findstr /r /c:"eslint[^ ]" package.json') do call npm rm --save-dev %%m
-  - if exist node_modules npm prune
-  - if exist node_modules npm rebuild
+  # Configure npm
+  - ps: |
+      # Skip updating shrinkwrap / lock
+      npm config set shrinkwrap false
+      # Skip SSL validation on Node.js < 0.10
+      if ([int]$env:nodejs_version.split(".")[0] -eq 0 -and [int]$env:nodejs_version.split(".")[1] -lt 10) {
+        npm config set strict-ssl false
+      }
+  # Remove all non-test dependencies
+  - ps: |
+      # Remove coverage dependency
+      npm rm --silent --save-dev istanbul
+      # Remove lint dependencies
+      cmd.exe /c "node -pe `"Object.keys(require('./package').devDependencies).join('\n')`"" | `
+        sls "^eslint(-|$)" | `
+        %{ npm rm --silent --save-dev $_ }
+  # Update Node.js modules
+  - ps: |
+      # Prune & rebuild node_modules
+      if (Test-Path -Path node_modules) {
+        npm prune
+        npm rebuild
+      }
+  # Install Node.js modules
   - npm install
 build: off
 test_script:
-  - node --version
-  - npm --version
-  - set npm_test_command=test
-  - for /f %%l in ('npm -ps ls istanbul') do set npm_test_command=test-ci
-  - npm run %npm_test_command%
+  # Output version data
+  - ps: |
+      node --version
+      npm --version
+  # Run test script
+  - npm test
 version: "{build}"
