@@ -146,14 +146,14 @@ describe('serveStatic()', function () {
     describe('when false', function () {
       it('should not include Accept-Ranges', function (done) {
         request(createServer(fixtures, { 'acceptRanges': false }))
-          .get('/nums')
+          .get('/nums.txt')
           .expect(shouldNotHaveHeader('Accept-Ranges'))
           .expect(200, '123456789', done)
       })
 
       it('should ignore Rage request header', function (done) {
         request(createServer(fixtures, { 'acceptRanges': false }))
-          .get('/nums')
+          .get('/nums.txt')
           .set('Range', 'bytes=0-3')
           .expect(shouldNotHaveHeader('Accept-Ranges'))
           .expect(shouldNotHaveHeader('Content-Range'))
@@ -164,14 +164,14 @@ describe('serveStatic()', function () {
     describe('when true', function () {
       it('should include Accept-Ranges', function (done) {
         request(createServer(fixtures, { 'acceptRanges': true }))
-          .get('/nums')
+          .get('/nums.txt')
           .expect('Accept-Ranges', 'bytes')
           .expect(200, '123456789', done)
       })
 
       it('should obey Rage request header', function (done) {
         request(createServer(fixtures, { 'acceptRanges': true }))
-          .get('/nums')
+          .get('/nums.txt')
           .set('Range', 'bytes=0-3')
           .expect('Accept-Ranges', 'bytes')
           .expect('Content-Range', 'bytes 0-3/9')
@@ -184,14 +184,14 @@ describe('serveStatic()', function () {
     describe('when false', function () {
       it('should not include Cache-Control', function (done) {
         request(createServer(fixtures, { 'cacheControl': false }))
-          .get('/nums')
+          .get('/nums.txt')
           .expect(shouldNotHaveHeader('Cache-Control'))
           .expect(200, '123456789', done)
       })
 
       it('should ignore maxAge', function (done) {
         request(createServer(fixtures, { 'cacheControl': false, 'maxAge': 12000 }))
-          .get('/nums')
+          .get('/nums.txt')
           .expect(shouldNotHaveHeader('Cache-Control'))
           .expect(200, '123456789', done)
       })
@@ -200,7 +200,7 @@ describe('serveStatic()', function () {
     describe('when true', function () {
       it('should include Cache-Control', function (done) {
         request(createServer(fixtures, { 'cacheControl': true }))
-          .get('/nums')
+          .get('/nums.txt')
           .expect('Cache-Control', 'public, max-age=0')
           .expect(200, '123456789', done)
       })
@@ -406,13 +406,13 @@ describe('serveStatic()', function () {
   describe('immutable', function () {
     it('should default to false', function (done) {
       request(createServer(fixtures))
-        .get('/nums')
+        .get('/nums.txt')
         .expect('Cache-Control', 'public, max-age=0', done)
     })
 
     it('should set immutable directive in Cache-Control', function (done) {
       request(createServer(fixtures, { 'immutable': true, 'maxAge': '1h' }))
-        .get('/nums')
+        .get('/nums.txt')
         .expect('Cache-Control', 'public, max-age=3600, immutable', done)
     })
   })
@@ -421,7 +421,7 @@ describe('serveStatic()', function () {
     describe('when false', function () {
       it('should not include Last-Modifed', function (done) {
         request(createServer(fixtures, { 'lastModified': false }))
-          .get('/nums')
+          .get('/nums.txt')
           .expect(shouldNotHaveHeader('Last-Modified'))
           .expect(200, '123456789', done)
       })
@@ -430,7 +430,7 @@ describe('serveStatic()', function () {
     describe('when true', function () {
       it('should include Last-Modifed', function (done) {
         request(createServer(fixtures, { 'lastModified': true }))
-          .get('/nums')
+          .get('/nums.txt')
           .expect('Last-Modified', /^\w{3}, \d+ \w+ \d+ \d+:\d+:\d+ \w+$/)
           .expect(200, '123456789', done)
       })
@@ -535,7 +535,7 @@ describe('serveStatic()', function () {
       } })
 
       request(server)
-        .get('/nums')
+        .get('/nums.txt')
         .expect('x-custom', 'set')
         .expect(200, done)
     })
@@ -589,49 +589,49 @@ describe('serveStatic()', function () {
 
     it('should support byte ranges', function (done) {
       request(server)
-        .get('/nums')
+        .get('/nums.txt')
         .set('Range', 'bytes=0-4')
         .expect('12345', done)
     })
 
     it('should be inclusive', function (done) {
       request(server)
-        .get('/nums')
+        .get('/nums.txt')
         .set('Range', 'bytes=0-0')
         .expect('1', done)
     })
 
     it('should set Content-Range', function (done) {
       request(server)
-        .get('/nums')
+        .get('/nums.txt')
         .set('Range', 'bytes=2-5')
         .expect('Content-Range', 'bytes 2-5/9', done)
     })
 
     it('should support -n', function (done) {
       request(server)
-        .get('/nums')
+        .get('/nums.txt')
         .set('Range', 'bytes=-3')
         .expect('789', done)
     })
 
     it('should support n-', function (done) {
       request(server)
-        .get('/nums')
+        .get('/nums.txt')
         .set('Range', 'bytes=3-')
         .expect('456789', done)
     })
 
     it('should respond with 206 "Partial Content"', function (done) {
       request(server)
-        .get('/nums')
+        .get('/nums.txt')
         .set('Range', 'bytes=0-4')
         .expect(206, done)
     })
 
     it('should set Content-Length to the # of octets transferred', function (done) {
       request(server)
-        .get('/nums')
+        .get('/nums.txt')
         .set('Range', 'bytes=2-3')
         .expect('Content-Length', '2')
         .expect(206, '34', done)
@@ -640,14 +640,14 @@ describe('serveStatic()', function () {
     describe('when last-byte-pos of the range is greater than current length', function () {
       it('is taken to be equal to one less than the current length', function (done) {
         request(server)
-          .get('/nums')
+          .get('/nums.txt')
           .set('Range', 'bytes=2-50')
           .expect('Content-Range', 'bytes 2-8/9', done)
       })
 
       it('should adapt the Content-Length accordingly', function (done) {
         request(server)
-          .get('/nums')
+          .get('/nums.txt')
           .set('Range', 'bytes=2-50')
           .expect('Content-Length', '7')
           .expect(206, done)
@@ -657,14 +657,14 @@ describe('serveStatic()', function () {
     describe('when the first- byte-pos of the range is greater than the current length', function () {
       it('should respond with 416', function (done) {
         request(server)
-          .get('/nums')
+          .get('/nums.txt')
           .set('Range', 'bytes=9-50')
           .expect(416, done)
       })
 
       it('should include a Content-Range header of complete length', function (done) {
         request(server)
-          .get('/nums')
+          .get('/nums.txt')
           .set('Range', 'bytes=9-50')
           .expect('Content-Range', 'bytes */9')
           .expect(416, done)
@@ -674,7 +674,7 @@ describe('serveStatic()', function () {
     describe('when syntactically invalid', function () {
       it('should respond with 200 and the entire contents', function (done) {
         request(server)
-          .get('/nums')
+          .get('/nums.txt')
           .set('Range', 'asdf')
           .expect('123456789', done)
       })
