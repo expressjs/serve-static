@@ -1,5 +1,6 @@
 
 var assert = require('assert')
+var Buffer = require('safe-buffer').Buffer
 var http = require('http')
 var path = require('path')
 var request = require('supertest')
@@ -61,7 +62,9 @@ describe('serveStatic()', function () {
     it('should support urlencoded pathnames', function (done) {
       request(server)
         .get('/foo%20bar')
-        .expect(200, 'baz', done)
+        .expect(200)
+        .expect(shouldHaveBody(Buffer.from('baz')))
+        .end(done)
     })
 
     it('should not choke on auth-looking URL', function (done) {
@@ -87,7 +90,9 @@ describe('serveStatic()', function () {
     it('should support HEAD', function (done) {
       request(server)
         .head('/todo.txt')
-        .expect(200, '', done)
+        .expect(200)
+        .expect(shouldNotHaveBody())
+        .end(done)
     })
 
     it('should skip POST requests', function (done) {
@@ -399,7 +404,9 @@ describe('serveStatic()', function () {
     it('should be served when dotfiles: "allow" is given', function (done) {
       request(server)
         .get('/.hidden')
-        .expect(200, 'I am hidden', done)
+        .expect(200)
+        .expect(shouldHaveBody(Buffer.from('I am hidden')))
+        .end(done)
     })
   })
 
@@ -823,6 +830,22 @@ function createServer (dir, opts, fn) {
       res.end(err ? err.stack : 'sorry!')
     })
   })
+}
+
+function shouldHaveBody (buf) {
+  return function (res) {
+    var body = !Buffer.isBuffer(res.body)
+      ? Buffer.from(res.text)
+      : res.body
+    assert.ok(body, 'response has body')
+    assert.strictEqual(body.toString('hex'), buf.toString('hex'))
+  }
+}
+
+function shouldNotHaveBody () {
+  return function (res) {
+    assert.ok(res.text === '' || res.text === undefined)
+  }
 }
 
 function shouldNotHaveHeader (header) {

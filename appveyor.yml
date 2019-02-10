@@ -45,6 +45,15 @@ install:
       } elseif ([int]$env:nodejs_version.split(".")[0] -lt 4) {
         npm install --silent --save-dev mocha@3.5.3
       }
+  - ps: |
+      # supertest for http calls
+      # - use 1.1.0 for Node.js < 0.10
+      # - use 2.0.0 for Node.js < 4
+      if ([int]$env:nodejs_version.split(".")[0] -eq 0 -and [int]$env:nodejs_version.split(".")[1] -lt 10) {
+        npm install --silent --save-dev supertest@1.1.0
+      } elseif ([int]$env:nodejs_version.split(".")[0] -lt 4) {
+        npm install --silent --save-dev supertest@2.0.0
+      }
   # Update Node.js modules
   - ps: |
       # Prune & rebuild node_modules
