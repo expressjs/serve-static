@@ -563,6 +563,44 @@ describe('serveStatic()', function () {
     })
   })
 
+  describe('exclude', function () {
+    var error = /exclude.*regexp/
+    it('should reject non-regexp', function () {
+      assert.throws(serveStatic.bind(null, fixtures, { 'exclude': '' }), error)
+      assert.throws(serveStatic.bind(null, fixtures, { 'exclude': '0' }), error)
+      assert.throws(serveStatic.bind(null, fixtures, { 'exclude': 0 }), error)
+      assert.throws(serveStatic.bind(null, fixtures, { 'exclude': '1' }), error)
+      assert.throws(serveStatic.bind(null, fixtures, { 'exclude': 1 }), error)
+      assert.throws(serveStatic.bind(null, fixtures, { 'exclude': true }), error)
+      assert.throws(serveStatic.bind(null, fixtures, { 'exclude': false }), error)
+      assert.throws(serveStatic.bind(null, fixtures, { 'exclude': {} }), error)
+    })
+
+    it('when empty exclude regexp', function (done) {
+      var server = createServer(fixtures)
+
+      request(server)
+      .get('/excludes/A.txt')
+      .expect(200, 'A\n', done)
+    })
+
+    it('when an exclude regexp', function (done) {
+      var server = createServer(fixtures, { exclude: /A/ })
+
+      request(server)
+      .get('/excludes/A.txt')
+      .expect(404)
+
+      request(server)
+      .get('/excludes/A.htm')
+      .expect(404)
+
+      request(server)
+      .get('/excludes/A.html')
+      .expect(404, done)
+    })
+  })
+
   describe('when traversing past root', function () {
     before(function () {
       this.server = createServer(fixtures, {'fallthrough': false})

@@ -56,8 +56,14 @@ function serveStatic (root, options) {
   // headers listener
   var setHeaders = opts.setHeaders
 
+  var exclude = opts.exclude
+
   if (setHeaders && typeof setHeaders !== 'function') {
     throw new TypeError('option setHeaders must be function')
+  }
+
+  if (typeof exclude !== 'undefined' && Object.prototype.toString.call(exclude) !== '[object RegExp]') {
+    throw new TypeError('option exclude must be regexp')
   }
 
   // setup options for send
@@ -108,6 +114,14 @@ function serveStatic (root, options) {
       stream.on('file', function onFile () {
         // once file is determined, always forward error
         forwardError = true
+      })
+    }
+
+    if (exclude) {
+      stream.on('file', function onExclude (path) {
+        if (exclude.test(path)) {
+          next()
+        }
       })
     }
 
