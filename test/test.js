@@ -285,8 +285,10 @@ describe('serveStatic()', function () {
       })
 
       it('should fall-through when URL too long', function (done) {
-        request(this.server)
-          .get('/' + Array(8192).join('foobar'))
+        var root = fixtures + Array(10000).join('/foobar')
+
+        request(createServer(root, { 'fallthrough': true }))
+          .get('/')
           .expect(404, 'sorry!', done)
       })
 
@@ -352,8 +354,10 @@ describe('serveStatic()', function () {
       })
 
       it('should 404 when URL too long', function (done) {
-        request(this.server)
-          .get('/' + Array(8192).join('foobar'))
+        var root = fixtures + Array(10000).join('/foobar')
+
+        request(createServer(root, { 'fallthrough': false }))
+          .get('/')
           .expect(404, /ENAMETOOLONG/, done)
       })
 
