@@ -1,6 +1,7 @@
 unreleased
 ==========
 
+  * Set stricter CSP header in redirect response
   * deps: send@0.17.1
     - deps: range-parser@~1.2.1
 
