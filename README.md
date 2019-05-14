@@ -131,6 +131,14 @@ the arguments are:
   - `path` the file path that is being sent
   - `stat` the stat object of the file that is being sent
 
+##### caseSensitive
+
+When set to `true` all the requests against the file system are made case sensitive even on case insensitive file systems.
+This effects not only the file name but the whole path.
+When set to `false` the default behavior of the filesystem is used.
+
+The default value is `false`
+
 ## Examples
 
 ### Serve files with vanilla node.js http server

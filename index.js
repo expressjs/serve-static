@@ -53,6 +53,9 @@ function serveStatic (root, options) {
   // default redirect
   var redirect = opts.redirect !== false
 
+  // default caseSensitive to be passed to the 'send' module
+  opts.caseSensitive = opts.caseSensitive || false
+
   // headers listener
   var setHeaders = opts.setHeaders
 
