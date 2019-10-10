@@ -17,6 +17,7 @@ var encodeUrl = require('encodeurl')
 var escapeHtml = require('escape-html')
 var parseUrl = require('parseurl')
 var resolve = require('path').resolve
+var fs = require('fs')
 var send = require('send')
 var url = require('url')
 
@@ -49,6 +50,16 @@ function serveStatic (root, options) {
 
   // fall-though
   var fallthrough = opts.fallthrough !== false
+
+  // handle symlinks
+  var realroot
+  var followsymlinks = true
+
+  // only set followsymlinks to false if it was explicitly set
+  if (opts.followsymlinks === false) {
+      followsymlinks = false
+      realroot = fs.realpathSync(root)
+  }
 
   // default redirect
   var redirect = opts.redirect !== false
@@ -86,10 +97,27 @@ function serveStatic (root, options) {
     var forwardError = !fallthrough
     var originalUrl = parseUrl.original(req)
     var path = parseUrl(req).pathname
+    var fullpath, realpath
 
     // make sure redirect occurs at mount
     if (path === '/' && originalUrl.pathname.substr(-1) !== '/') {
       path = ''
+    }
+
+    if (followsymlinks == false) {
+      fullpath = realroot + path
+      realpath = fs.realpathSync(realroot+path)
+      // if the full path and the real path are not the same, 
+      // then there is a symlink somewhere along the way
+      if (fullpath != realpath) {
+        if (fallthrough) {
+          return next()
+        }
+
+        // forbidden on symlinks
+        this.error(403)
+        return
+      }
     }
 
     // create send stream
