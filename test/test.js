@@ -3,6 +3,7 @@ var assert = require('assert')
 var Buffer = require('safe-buffer').Buffer
 var http = require('http')
 var path = require('path')
+var fs = require('fs')
 var request = require('supertest')
 var serveStatic = require('..')
 
@@ -10,6 +11,10 @@ var fixtures = path.join(__dirname, '/fixtures')
 var relative = path.relative(process.cwd(), fixtures)
 
 var skipRelative = ~relative.indexOf('..') || path.resolve(relative) === relative
+var skipSymlinks = true
+try {
+    skipSymlinks = fs.realpathSync(fixtures + '/users/tobi.txt') !== fs.realpathSync(fixtures + '/members/tobi.txt')
+} catch (e) {}
 
 describe('serveStatic()', function () {
   describe('basic operations', function () {
@@ -759,68 +764,70 @@ describe('serveStatic()', function () {
         .get('/todo/')
         .expect(404, done)
     })
-  })
+  });
 
-  describe('when followsymlinks is false', function () {
-    var server
-    before(function () {
-      server = createServer(fixtures, { followsymlinks: false, fallthrough: false })
+  (skipSymlinks ? describe.skip : describe)('symlink tests', function () {
+    describe('when followsymlinks is false', function () {
+      var server
+      before(function () {
+        server = createServer(fixtures, { followsymlinks: false, fallthrough: false })
+      })
+
+      it('accessing a real file works', function (done) {
+        request(server)
+          .get('/users/tobi.txt')
+          .expect(200, 'ferret', done)
+      })
+
+      it('should 403 on a symlink', function (done) {
+        request(server)
+          .get('/members/tobi.txt')
+          .expect(403, done)
+      })
+
+      it('should fail on nested root symlink', function (done) {
+        request(server)
+          .get('/symroot/users/tobi.txt')
+          .expect(403, done)
+      })
     })
 
-    it('accessing a real file works', function (done) {
-      request(server)
-        .get('/users/tobi.txt')
-        .expect(200, 'ferret', done)
+    describe('when followsymlinks is false and root had symlinks', function () {
+      var server
+      before(function () {
+        server = createServer(fixtures + '/symroot', { followsymlinks: false, fallthrough: false })
+      })
+
+      it('accessing a real file works', function (done) {
+        request(server)
+          .get('/users/tobi.txt')
+          .expect(200, 'ferret', done)
+      })
+
+      it('should 403 on a symlink', function (done) {
+        request(server)
+          .get('/members/tobi.txt')
+          .expect(403, done)
+      })
     })
 
-    it('should 403 on a symlink', function (done) {
-      request(server)
-        .get('/members/tobi.txt')
-        .expect(403, done)
-    })
+    describe('when followsymlinks is false and fallthrough is true', function () {
+      var server
+      before(function () {
+        server = createServer(fixtures, { followsymlinks: false, fallthrough: true })
+      })
 
-    it('should fail on nested root symlink', function (done) {
-      request(server)
-        .get('/symroot/users/tobi.txt')
-        .expect(403, done)
-    })
-  })
+      it('accessing a real file works', function (done) {
+        request(server)
+          .get('/users/tobi.txt')
+          .expect(200, 'ferret', done)
+      })
 
-  describe('when followsymlinks is false and root had symlinks', function () {
-    var server
-    before(function () {
-      server = createServer(fixtures + '/symroot', { followsymlinks: false, fallthrough: false })
-    })
-
-    it('accessing a real file works', function (done) {
-      request(server)
-        .get('/users/tobi.txt')
-        .expect(200, 'ferret', done)
-    })
-
-    it('should 403 on a symlink', function (done) {
-      request(server)
-        .get('/members/tobi.txt')
-        .expect(403, done)
-    })
-  })
-
-  describe('when followsymlinks is false and fallthrough is true', function () {
-    var server
-    before(function () {
-      server = createServer(fixtures, { followsymlinks: false, fallthrough: true })
-    })
-
-    it('accessing a real file works', function (done) {
-      request(server)
-        .get('/users/tobi.txt')
-        .expect(200, 'ferret', done)
-    })
-
-    it('should 404 on a symlink', function (done) {
-      request(server)
-        .get('/members/tobi.txt')
-        .expect(404, done)
+      it('should 404 on a symlink', function (done) {
+        request(server)
+          .get('/members/tobi.txt')
+          .expect(404, done)
+      })
     })
   })
 
