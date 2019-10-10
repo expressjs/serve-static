@@ -13,7 +13,7 @@ var relative = path.relative(process.cwd(), fixtures)
 var skipRelative = ~relative.indexOf('..') || path.resolve(relative) === relative
 var skipSymlinks = true
 try {
-    skipSymlinks = fs.realpathSync(fixtures + '/users/tobi.txt') !== fs.realpathSync(fixtures + '/members/tobi.txt')
+  skipSymlinks = fs.realpathSync(fixtures + '/users/tobi.txt') !== fs.realpathSync(fixtures + '/members/tobi.txt')
 } catch (e) {}
 
 describe('serveStatic()', function () {
