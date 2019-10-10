@@ -57,8 +57,8 @@ function serveStatic (root, options) {
 
   // only set followsymlinks to false if it was explicitly set
   if (opts.followsymlinks === false) {
-      followsymlinks = false
-      realroot = fs.realpathSync(root)
+    followsymlinks = false
+    realroot = fs.realpathSync(root)
   }
 
   // default redirect
@@ -104,10 +104,10 @@ function serveStatic (root, options) {
       path = ''
     }
 
-    if (followsymlinks == false) {
+    if (followsymlinks === false) {
       fullpath = realroot + path
-      realpath = fs.realpathSync(realroot+path)
-      // if the full path and the real path are not the same, 
+      realpath = fs.realpathSync(realroot + path)
+      // if the full path and the real path are not the same,
       // then there is a symlink somewhere along the way
       if (fullpath != realpath) {
         if (fallthrough) {
@@ -115,7 +115,9 @@ function serveStatic (root, options) {
         }
 
         // forbidden on symlinks
-        this.error(403)
+        res.statusCode = 403
+        res.setHeader('Content-Length', '0')
+        res.end()
         return
       }
     }

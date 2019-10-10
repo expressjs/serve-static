@@ -764,7 +764,7 @@ describe('serveStatic()', function () {
   describe('when followsymlinks is false', function () {
     var server
     before(function () {
-      server = createServer(fixtures, { followsymlinks: false });
+      server = createServer(fixtures, { followsymlinks: false, fallthrough: false })
     })
 
     it('accessing a real file works', function (done) {
@@ -776,21 +776,20 @@ describe('serveStatic()', function () {
     it('should 403 on a symlink', function (done) {
       request(server)
         .get('/members/tobi.txt')
-        .expect(404, done)
+        .expect(403, done)
     })
 
     it('should fail on nested root symlink', function (done) {
       request(server)
         .get('/symroot/users/tobi.txt')
-        .expect(404, done)
+        .expect(403, done)
     })
-
   })
 
   describe('when followsymlinks is false and root had symlinks', function () {
     var server
     before(function () {
-      server = createServer(fixtures + "/symroot", { followsymlinks: false });
+      server = createServer(fixtures + '/symroot', { followsymlinks: false, fallthrough: false })
     })
 
     it('accessing a real file works', function (done) {
@@ -802,9 +801,29 @@ describe('serveStatic()', function () {
     it('should 403 on a symlink', function (done) {
       request(server)
         .get('/members/tobi.txt')
+        .expect(403, done)
+    })
+  })
+
+  describe('when followsymlinks is false and fallthrough is true', function () {
+    var server
+    before(function () {
+      server = createServer(fixtures, { followsymlinks: false, fallthrough: true })
+    })
+
+    it('accessing a real file works', function (done) {
+      request(server)
+        .get('/users/tobi.txt')
+        .expect(200, 'ferret', done)
+    })
+
+    it('should 404 on a symlink', function (done) {
+      request(server)
+        .get('/members/tobi.txt')
         .expect(404, done)
     })
   })
+
   describe('when responding non-2xx or 304', function () {
     var server
     before(function () {
