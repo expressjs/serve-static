@@ -197,8 +197,8 @@ app.listen(3000)
 #### Multiple roots
 
 This example shows a simple way to search through multiple directories.
-Files are look for in `public-optimized/` first, then `public/` second as
-a fallback.
+Files are searched for in `public-optimized/` first, then `public/` second
+as a fallback.
 
 ```js
 var express = require('express')
