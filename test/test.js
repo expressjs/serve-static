@@ -779,9 +779,15 @@ describe('serveStatic()', function () {
           .expect(200, 'ferret', done)
       })
 
-      it('should 403 on a symlink', function (done) {
+      it('should 403 on a symlink in the path', function (done) {
         request(server)
           .get('/members/tobi.txt')
+          .expect(403, done)
+      })
+
+      it('should 403 on a symlink as the file', function (done) {
+        request(server)
+          .get('/users/william.txt')
           .expect(403, done)
       })
 
@@ -804,9 +810,15 @@ describe('serveStatic()', function () {
           .expect(200, 'ferret', done)
       })
 
-      it('should 403 on a symlink', function (done) {
+      it('should 403 on a symlink in the path', function (done) {
         request(server)
           .get('/members/tobi.txt')
+          .expect(403, done)
+      })
+
+      it('should 403 on a symlink as the file', function (done) {
+        request(server)
+          .get('/users/william.txt')
           .expect(403, done)
       })
     })

@@ -100,6 +100,11 @@ reject requests for files that have a symlink in their path.
 
 The default value is `true`.
 
+Note that setting `followsymlinks` to `false` also causes the the module
+to resolve any symbolic links in the root path during startup. This means
+that if your root path does contain symlinks, changes to those symlinks after
+application startup will not be noticed.
+
 
 ##### immutable
 

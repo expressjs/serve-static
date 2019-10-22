@@ -55,12 +55,6 @@ function serveStatic (root, options) {
   var realroot
   var followsymlinks = true
 
-  // only set followsymlinks to false if it was explicitly set
-  if (opts.followsymlinks === false) {
-    followsymlinks = false
-    realroot = fs.realpathSync(root)
-  }
-
   // default redirect
   var redirect = opts.redirect !== false
 
@@ -74,6 +68,16 @@ function serveStatic (root, options) {
   // setup options for send
   opts.maxage = opts.maxage || opts.maxAge || 0
   opts.root = resolve(root)
+
+  // only set followsymlinks to false if it was explicitly set
+  if (opts.followsymlinks === false) {
+    followsymlinks = false
+    realroot = fs.realpathSync(root)
+    opts.flags = fs.constants.O_NOFOLLOW | fs.constants.O_RDONLY
+    // if followsymlinks is disabled, we need the fully resolved
+    // (un-symlink'd) root to start
+    opts.root = realroot
+  }
 
   // construct directory listener
   var onDirectory = redirect
