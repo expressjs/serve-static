@@ -110,7 +110,11 @@ function serveStatic (root, options) {
 
     if (followsymlinks === false) {
       fullpath = realroot + path
-      realpath = fs.realpathSync(realroot + path)
+      try {
+        realpath = fs.realpathSync(realroot + path)
+      } catch (e) {
+        realpath = undefined
+      }
       // if the full path and the real path are not the same,
       // then there is a symlink somewhere along the way
       if (fullpath !== realpath) {

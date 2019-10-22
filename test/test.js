@@ -779,6 +779,12 @@ describe('serveStatic()', function () {
           .expect(200, 'ferret', done)
       })
 
+      it('should 403 on nonexistant file', function (done) {
+        request(server)
+          .get('/users/bob.txt')
+          .expect(403, done)
+      })
+
       it('should 403 on a symlink in the path', function (done) {
         request(server)
           .get('/members/tobi.txt')
