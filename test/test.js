@@ -147,6 +147,25 @@ describe('serveStatic()', function () {
     })
   })
 
+  describe('nonexistent root provided', function () {
+    var server
+    before(function () {
+      server = createServer(fixtures + '/nonexistent')
+    })
+
+    it('should always fail', function (done) {
+      request(server)
+        .get('/todo.txt')
+        .expect(404, done)
+    })
+
+    it('".." should still fail', function (done) {
+      request(server)
+        .get('/../todo.txt')
+        .expect(404, done)
+    })
+  })
+
   describe('acceptRanges', function () {
     describe('when false', function () {
       it('should not include Accept-Ranges', function (done) {
