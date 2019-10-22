@@ -18,7 +18,7 @@ var escapeHtml = require('escape-html')
 var parseUrl = require('parseurl')
 var resolve = require('path').resolve
 var fs = require('fs')
-var constants = require('constants')
+var constants = fs.constants || require('constants') // eslint-disable-line node/no-deprecated-api
 var send = require('send')
 var url = require('url')
 
