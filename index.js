@@ -18,6 +18,7 @@ var escapeHtml = require('escape-html')
 var parseUrl = require('parseurl')
 var resolve = require('path').resolve
 var fs = require('fs')
+var constants = require('constants')
 var send = require('send')
 var url = require('url')
 
@@ -73,7 +74,7 @@ function serveStatic (root, options) {
   if (opts.followsymlinks === false) {
     followsymlinks = false
     realroot = fs.realpathSync(root)
-    opts.flags = fs.constants.O_NOFOLLOW | fs.constants.O_RDONLY
+    opts.flags = constants.O_RDONLY | constants.O_NOFOLLOW
     // if followsymlinks is disabled, we need the fully resolved
     // (un-symlink'd) root to start
     opts.root = realroot
