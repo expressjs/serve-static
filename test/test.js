@@ -580,6 +580,25 @@ describe('serveStatic()', function () {
     })
   })
 
+  describe('when non-existent root path', function () {
+    var server
+    before(function () {
+      server = createServer(fixtures + '/does_not_exist')
+    })
+
+    it('should 404 for any file', function (done) {
+      request(server)
+        .get('/todo.txt')
+        .expect(404, done)
+    })
+
+    it('should not allow traversal', function (done) {
+      request(server)
+        .get('/../todo.txt')
+        .expect(404, done)
+    })
+  })
+
   describe('when traversing past root', function () {
     before(function () {
       this.server = createServer(fixtures, { fallthrough: false })
