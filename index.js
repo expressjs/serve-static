@@ -16,9 +16,11 @@
 var encodeUrl = require('encodeurl')
 var escapeHtml = require('escape-html')
 var parseUrl = require('parseurl')
-var resolve = require('path').resolve
+var pathLib = require('path')
 var send = require('send')
-var url = require('url')
+var mime = send.mime
+var fs = require('fs')
+var urlLib = require('url')
 
 /**
  * Module exports.
@@ -62,35 +64,15 @@ function serveStatic (root, options) {
 
   // setup options for send
   opts.maxage = opts.maxage || opts.maxAge || 0
-  opts.root = resolve(root)
+  opts.root = pathLib.resolve(root)
 
   // construct directory listener
   var onDirectory = redirect
     ? createRedirectDirectoryListener()
     : createNotFoundDirectoryListener()
 
-  return function serveStatic (req, res, next) {
-    if (req.method !== 'GET' && req.method !== 'HEAD') {
-      if (fallthrough) {
-        return next()
-      }
-
-      // method not allowed
-      res.statusCode = 405
-      res.setHeader('Allow', 'GET, HEAD')
-      res.setHeader('Content-Length', '0')
-      res.end()
-      return
-    }
-
+  function pipeStatic (req, res, next, path) {
     var forwardError = !fallthrough
-    var originalUrl = parseUrl.original(req)
-    var path = parseUrl(req).pathname
-
-    // make sure redirect occurs at mount
-    if (path === '/' && originalUrl.pathname.substr(-1) !== '/') {
-      path = ''
-    }
 
     // create send stream
     var stream = send(req, path, opts)
@@ -123,6 +105,55 @@ function serveStatic (root, options) {
 
     // pipe
     stream.pipe(res)
+
+    return stream
+  }
+
+  return function serveStatic (req, res, next) {
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+      if (fallthrough) {
+        return next()
+      }
+
+      // method not allowed
+      res.statusCode = 405
+      res.setHeader('Allow', 'GET, HEAD')
+      res.setHeader('Content-Length', '0')
+      res.end()
+      return
+    }
+
+    var originalUrl = parseUrl.original(req)
+    var path = parseUrl(req).pathname
+
+    // make sure redirect occurs at mount
+    if (path === '/' && originalUrl.pathname.substr(-1) !== '/') {
+      path = ''
+    }
+
+    // check and send a gzipped or plain file
+    var gzipAccept =
+      (req.headers['Accept-Encoding'.toLowerCase()] || '').indexOf('gzip') >= 0
+    if (gzipAccept && opts.gzip) {
+      var gzipPath = pathLib.normalize('.' + pathLib.sep + path + '.gz')
+
+      fs.access(pathLib.resolve(opts.root, gzipPath), err => {
+        if (err) {
+          pipeStatic(req, res, next, path)
+        } else {
+          var stream = pipeStatic(req, res, next, gzipPath)
+
+          stream.on('headers', () => {
+            res.setHeader('Content-Encoding', 'gzip')
+
+            var type = stream.type(path)
+            if (type) res.setHeader('Content-Type', type)
+          })
+        }
+      })
+    } else {
+      pipeStatic(req, res, next, path)
+    }
   }
 }
 
@@ -194,7 +225,7 @@ function createRedirectDirectoryListener () {
     originalUrl.pathname = collapseLeadingSlashes(originalUrl.pathname + '/')
 
     // reformat the URL
-    var loc = encodeUrl(url.format(originalUrl))
+    var loc = encodeUrl(urlLib.format(originalUrl))
     var doc = createHtmlDocument('Redirecting', 'Redirecting to <a href="' + escapeHtml(loc) + '">' +
       escapeHtml(loc) + '</a>')
 

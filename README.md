@@ -131,6 +131,10 @@ the arguments are:
   - `path` the file path that is being sent
   - `stat` the stat object of the file that is being sent
 
+##### gzip
+
+Send .gz file when it exists aside origin file, defaults to false.
+
 ## Examples
 
 ### Serve files with vanilla node.js http server

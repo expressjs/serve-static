@@ -2,6 +2,7 @@
 var assert = require('assert')
 var Buffer = require('safe-buffer').Buffer
 var http = require('http')
+var fs = require('fs')
 var path = require('path')
 var request = require('supertest')
 var serveStatic = require('..')
@@ -818,6 +819,41 @@ describe('serveStatic()', function () {
         .get('/static')
         .expect('Location', '/static/')
         .expect(301, done)
+    })
+  })
+
+  describe('gzip', function () {
+    var server
+    before(function () {
+      server = createServer(fixtures, { gzip: true })
+    })
+
+    it('should set Content-Encoding', function (done) {
+      request(server)
+        .get('/todo.txt')
+        .expect('Content-Encoding', 'gzip')
+        .expect(200, done)
+    })
+
+    it('should set Content-Type', function (done) {
+      request(server)
+        .get('/todo.txt')
+        .expect('Content-Type', 'text/plain; charset=UTF-8')
+        .expect(200, done)
+    })
+
+    it('should serve static files', function (done) {
+      request(server)
+        .get('/todo.txt')
+        .expect(200, '- groceries', done)
+    })
+
+    it('should set Content-Length', function (done) {
+      request(server)
+        .get('/todo.txt')
+        .expect('Content-Length',
+          fs.statSync(path.resolve(__dirname, 'fixtures/todo.txt.gz')).size + '')
+        .expect(200, done)
     })
   })
 })
