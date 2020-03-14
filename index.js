@@ -137,13 +137,13 @@ function serveStatic (root, options) {
     if (gzipAccept && opts.gzip) {
       var gzipPath = pathLib.normalize('.' + pathLib.sep + path + '.gz')
 
-      fs.access(pathLib.resolve(opts.root, gzipPath), err => {
+      fs.access(pathLib.resolve(opts.root, gzipPath), function (err) {
         if (err) {
           pipeStatic(req, res, next, path)
         } else {
           var stream = pipeStatic(req, res, next, gzipPath)
 
-          stream.on('headers', () => {
+          stream.on('headers', function () {
             res.setHeader('Content-Encoding', 'gzip')
 
             var type = stream.type(path)
