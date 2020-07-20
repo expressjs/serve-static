@@ -59,6 +59,8 @@ function serveStatic (root, options) {
   if (setHeaders && typeof setHeaders !== 'function') {
     throw new TypeError('option setHeaders must be function')
   }
+  
+  var callNextOnFinish = opts.callNextOnFinish === true;
 
   // setup options for send
   opts.maxage = opts.maxage || opts.maxAge || 0
@@ -120,6 +122,17 @@ function serveStatic (root, options) {
 
       next()
     })
+    
+    if(callNextOnFinish){
+      res.once('finish', ()=>{
+        next();
+      })
+      res.once('close', ()=>{
+        if(!res.writableEnded){
+          next(new Error('Did not finish sending data (client my have aborted mid request)'))
+        }
+      })
+    }
 
     // pipe
     stream.pipe(res)
