@@ -124,10 +124,10 @@ function serveStatic (root, options) {
     })
     
     if(callNextOnFinish){
-      res.once('finish', ()=>{
+      res.once('finish', function () {
         next();
       })
-      res.once('close', ()=>{
+      res.once('close', function() {
         if(!res.writableEnded){
           next(new Error('Did not finish sending data (client my have aborted mid request)'))
         }
