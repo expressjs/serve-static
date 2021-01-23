@@ -94,8 +94,9 @@ function serveStatic (root, options) {
 
     if (opts.onRequest) {
       opts.onRequest(opts.root, path, req, (data) => {
-        opts.root = data.newRoot
-        sendFile(req, res, next, data.newPath, opts, onDirectory,
+        const newOpts = Object.assign({}, opts)
+        newOpts.root = data.newRoot
+        sendFile(req, res, next, data.newPath, newOpts, onDirectory,
           setHeaders, fallthrough, forwardError)
       })
     } else {
