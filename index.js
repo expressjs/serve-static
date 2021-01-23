@@ -35,7 +35,7 @@ module.exports.mime = send.mime
  * @public
  */
 
-function serveStatic (root, options) {
+function serveStatic(root, options) {
   if (!root) {
     throw new TypeError('root path required')
   }
@@ -69,7 +69,7 @@ function serveStatic (root, options) {
     ? createRedirectDirectoryListener()
     : createNotFoundDirectoryListener()
 
-  return function serveStatic (req, res, next) {
+  return function serveStatic(req, res, next) {
     if (req.method !== 'GET' && req.method !== 'HEAD') {
       if (fallthrough) {
         return next()
@@ -92,45 +92,57 @@ function serveStatic (root, options) {
       path = ''
     }
 
-    // create send stream
-    var stream = send(req, path, opts)
-
-    // add directory handler
-    stream.on('directory', onDirectory)
-
-    // add headers listener
-    if (setHeaders) {
-      stream.on('headers', setHeaders)
-    }
-
-    // add file listener for fallthrough
-    if (fallthrough) {
-      stream.on('file', function onFile () {
-        // once file is determined, always forward error
-        forwardError = true
+    if (opts.onRequest) {
+      opts.onRequest(opts.root, path, req, (data) => {
+        opts.root = data.newRoot
+        sendFile(req, res, next, data.newPath, opts, onDirectory,
+          setHeaders, fallthrough, forwardError)
       })
+    } else {
+      sendFile(req, res, next, path, opts, onDirectory, setHeaders, fallthrough, forwardError)
     }
+  }
+}
 
-    // forward errors
-    stream.on('error', function error (err) {
+function sendFile(req, res, next, path, opts, onDirectory, setHeaders, fallthrough, forwardError) {
+  // create send stream
+  const stream = send(req, path, opts);
+
+  // add directory handler
+  stream.on('directory', onDirectory)
+
+  // add headers listener
+  if (setHeaders) {
+      stream.on('headers', setHeaders)
+  }
+
+  // add file listener for fallthrough
+  if (fallthrough) {
+      stream.on('file', function onFile() {
+          // once file is determined, always forward error
+          forwardError = true
+      })
+  }
+
+  // forward errors
+  stream.on('error', function error(err) {
       if (forwardError || !(err.statusCode < 500)) {
-        next(err)
-        return
+          next(err)
+          return
       }
 
       next()
-    })
+  })
 
-    // pipe
-    stream.pipe(res)
-  }
+  // pipe
+  stream.pipe(res)
 }
 
 /**
  * Collapse all leading slashes into a single slash
  * @private
  */
-function collapseLeadingSlashes (str) {
+function collapseLeadingSlashes(str) {
   for (var i = 0; i < str.length; i++) {
     if (str.charCodeAt(i) !== 0x2f /* / */) {
       break
@@ -150,7 +162,7 @@ function collapseLeadingSlashes (str) {
  * @private
  */
 
-function createHtmlDocument (title, body) {
+function createHtmlDocument(title, body) {
   return '<!DOCTYPE html>\n' +
     '<html lang="en">\n' +
     '<head>\n' +
@@ -168,8 +180,8 @@ function createHtmlDocument (title, body) {
  * @private
  */
 
-function createNotFoundDirectoryListener () {
-  return function notFound () {
+function createNotFoundDirectoryListener() {
+  return function notFound() {
     this.error(404)
   }
 }
@@ -179,8 +191,8 @@ function createNotFoundDirectoryListener () {
  * @private
  */
 
-function createRedirectDirectoryListener () {
-  return function redirect (res) {
+function createRedirectDirectoryListener() {
+  return function redirect(res) {
     if (this.hasTrailingSlash()) {
       this.error(404)
       return
