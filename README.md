@@ -131,6 +131,26 @@ the arguments are:
   - `path` the file path that is being sent
   - `stat` the stat object of the file that is being sent
 
+##### onRequest
+
+A function in the form of:
+
+```typescript
+onRequest: (
+  // root folder path
+  root: string,
+  // the file path that is begin sent
+  path: string,
+  // http request
+  request: any,
+  // return data by calling this callback and
+  // optionally provide new root and path
+  cb: (data: { newRoot: string, newPath: string }) => void
+): void
+```
+
+This function basically allows you to redirect the path to a place other than the requested file.
+
 ## Examples
 
 ### Serve files with vanilla node.js http server
