@@ -186,12 +186,15 @@ function createRedirectDirectoryListener () {
       return
     }
 
+    // get prefix if forwarded by proxy
+    var forwardedPrefix = this.req.headers['x-forwarded-prefix'] || ''
+
     // get original URL
     var originalUrl = parseUrl.original(this.req)
 
     // append trailing slash
     originalUrl.path = null
-    originalUrl.pathname = collapseLeadingSlashes(originalUrl.pathname + '/')
+    originalUrl.pathname = forwardedPrefix + collapseLeadingSlashes(originalUrl.pathname + '/')
 
     // reformat the URL
     var loc = encodeUrl(url.format(originalUrl))

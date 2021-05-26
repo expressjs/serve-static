@@ -521,6 +521,23 @@ describe('serveStatic()', function () {
         .expect(404, done)
     })
 
+    describe('when redirected with x-forwarded-prefix', function () {
+      var server
+      before(function () {
+        server = createServer(fixtures, null, function (req, res) {
+          req.url = req.url.replace(/\/snow(\/|$)/, '/snow \u2603$1')
+          req.headers['x-forwarded-prefix'] = '/prefix'
+        })
+      })
+
+      it('should redirect directories appending prefix', function (done) {
+        request(server)
+          .get('/users')
+          .expect('Location', '/prefix/users/')
+          .expect(301, done)
+      })
+    })
+
     describe('when false', function () {
       var server
       before(function () {
