@@ -2,7 +2,7 @@
 
 [![NPM Version][npm-version-image]][npm-url]
 [![NPM Downloads][npm-downloads-image]][npm-url]
-[![Linux Build][travis-image]][travis-url]
+[![Linux Build][github-actions-ci-image]][github-actions-ci-url]
 [![Windows Build][appveyor-image]][appveyor-url]
 [![Test Coverage][coveralls-image]][coveralls-url]
 
@@ -250,10 +250,10 @@ function setCustomCacheControl (res, path) {
 [appveyor-url]: https://ci.appveyor.com/project/dougwilson/serve-static
 [coveralls-image]: https://badgen.net/coveralls/c/github/expressjs/serve-static/master
 [coveralls-url]: https://coveralls.io/r/expressjs/serve-static?branch=master
+[github-actions-ci-image]: https://badgen.net/github/checks/expressjs/serve-static/master?label=linux
+[github-actions-ci-url]: https://github.com/expressjs/serve-static/actions?query=workflow%3Aci
 [node-image]: https://badgen.net/npm/node/serve-static
 [node-url]: https://nodejs.org/en/download/
 [npm-downloads-image]: https://badgen.net/npm/dm/serve-static
 [npm-url]: https://npmjs.org/package/serve-static
 [npm-version-image]: https://badgen.net/npm/v/serve-static
-[travis-image]: https://badgen.net/travis/expressjs/serve-static/master?label=linux
-[travis-url]: https://travis-ci.org/expressjs/serve-static

@@ -1,6 +1,5 @@
 environment:
   matrix:
-    - nodejs_version: "0.8"
     - nodejs_version: "0.10"
     - nodejs_version: "0.12"
     - nodejs_version: "1.8"
@@ -26,10 +25,6 @@ install:
   - ps: |
       # Skip updating shrinkwrap / lock
       npm config set shrinkwrap false
-      # Skip SSL validation on Node.js < 0.10
-      if ([int]$env:nodejs_version.split(".")[0] -eq 0 -and [int]$env:nodejs_version.split(".")[1] -lt 10) {
-        npm config set strict-ssl false
-      }
   # Remove all non-test dependencies
   - ps: |
       # Remove coverage dependency
