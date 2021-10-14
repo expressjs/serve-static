@@ -150,14 +150,14 @@ describe('serveStatic()', function () {
   describe('acceptRanges', function () {
     describe('when false', function () {
       it('should not include Accept-Ranges', function (done) {
-        request(createServer(fixtures, { 'acceptRanges': false }))
+        request(createServer(fixtures, { acceptRanges: false }))
           .get('/nums.txt')
           .expect(shouldNotHaveHeader('Accept-Ranges'))
           .expect(200, '123456789', done)
       })
 
       it('should ignore Rage request header', function (done) {
-        request(createServer(fixtures, { 'acceptRanges': false }))
+        request(createServer(fixtures, { acceptRanges: false }))
           .get('/nums.txt')
           .set('Range', 'bytes=0-3')
           .expect(shouldNotHaveHeader('Accept-Ranges'))
@@ -168,14 +168,14 @@ describe('serveStatic()', function () {
 
     describe('when true', function () {
       it('should include Accept-Ranges', function (done) {
-        request(createServer(fixtures, { 'acceptRanges': true }))
+        request(createServer(fixtures, { acceptRanges: true }))
           .get('/nums.txt')
           .expect('Accept-Ranges', 'bytes')
           .expect(200, '123456789', done)
       })
 
       it('should obey Rage request header', function (done) {
-        request(createServer(fixtures, { 'acceptRanges': true }))
+        request(createServer(fixtures, { acceptRanges: true }))
           .get('/nums.txt')
           .set('Range', 'bytes=0-3')
           .expect('Accept-Ranges', 'bytes')
@@ -188,14 +188,14 @@ describe('serveStatic()', function () {
   describe('cacheControl', function () {
     describe('when false', function () {
       it('should not include Cache-Control', function (done) {
-        request(createServer(fixtures, { 'cacheControl': false }))
+        request(createServer(fixtures, { cacheControl: false }))
           .get('/nums.txt')
           .expect(shouldNotHaveHeader('Cache-Control'))
           .expect(200, '123456789', done)
       })
 
       it('should ignore maxAge', function (done) {
-        request(createServer(fixtures, { 'cacheControl': false, 'maxAge': 12000 }))
+        request(createServer(fixtures, { cacheControl: false, maxAge: 12000 }))
           .get('/nums.txt')
           .expect(shouldNotHaveHeader('Cache-Control'))
           .expect(200, '123456789', done)
@@ -204,7 +204,7 @@ describe('serveStatic()', function () {
 
     describe('when true', function () {
       it('should include Cache-Control', function (done) {
-        request(createServer(fixtures, { 'cacheControl': true }))
+        request(createServer(fixtures, { cacheControl: true }))
           .get('/nums.txt')
           .expect('Cache-Control', 'public, max-age=0')
           .expect(200, '123456789', done)
@@ -222,7 +222,7 @@ describe('serveStatic()', function () {
     })
 
     it('should be configurable', function (done) {
-      var server = createServer(fixtures, { 'extensions': 'txt' })
+      var server = createServer(fixtures, { extensions: 'txt' })
 
       request(server)
         .get('/todo')
@@ -230,7 +230,7 @@ describe('serveStatic()', function () {
     })
 
     it('should support disabling extensions', function (done) {
-      var server = createServer(fixtures, { 'extensions': false })
+      var server = createServer(fixtures, { extensions: false })
 
       request(server)
         .get('/todo')
@@ -238,7 +238,7 @@ describe('serveStatic()', function () {
     })
 
     it('should support fallbacks', function (done) {
-      var server = createServer(fixtures, { 'extensions': ['htm', 'html', 'txt'] })
+      var server = createServer(fixtures, { extensions: ['htm', 'html', 'txt'] })
 
       request(server)
         .get('/todo')
@@ -246,7 +246,7 @@ describe('serveStatic()', function () {
     })
 
     it('should 404 if nothing found', function (done) {
-      var server = createServer(fixtures, { 'extensions': ['htm', 'html', 'txt'] })
+      var server = createServer(fixtures, { extensions: ['htm', 'html', 'txt'] })
 
       request(server)
         .get('/bob')
@@ -263,7 +263,7 @@ describe('serveStatic()', function () {
 
     describe('when true', function () {
       before(function () {
-        this.server = createServer(fixtures, { 'fallthrough': true })
+        this.server = createServer(fixtures, { fallthrough: true })
       })
 
       it('should fall-through when OPTIONS request', function (done) {
@@ -287,14 +287,14 @@ describe('serveStatic()', function () {
       it('should fall-through when URL too long', function (done) {
         var root = fixtures + Array(10000).join('/foobar')
 
-        request(createServer(root, { 'fallthrough': true }))
+        request(createServer(root, { fallthrough: true }))
           .get('/')
           .expect(404, 'sorry!', done)
       })
 
       describe('with redirect: true', function () {
         before(function () {
-          this.server = createServer(fixtures, { 'fallthrough': true, 'redirect': true })
+          this.server = createServer(fixtures, { fallthrough: true, redirect: true })
         })
 
         it('should fall-through when directory', function (done) {
@@ -312,7 +312,7 @@ describe('serveStatic()', function () {
 
       describe('with redirect: false', function () {
         before(function () {
-          this.server = createServer(fixtures, { 'fallthrough': true, 'redirect': false })
+          this.server = createServer(fixtures, { fallthrough: true, redirect: false })
         })
 
         it('should fall-through when directory', function (done) {
@@ -331,7 +331,7 @@ describe('serveStatic()', function () {
 
     describe('when false', function () {
       before(function () {
-        this.server = createServer(fixtures, { 'fallthrough': false })
+        this.server = createServer(fixtures, { fallthrough: false })
       })
 
       it('should 405 when OPTIONS request', function (done) {
@@ -356,14 +356,14 @@ describe('serveStatic()', function () {
       it('should 404 when URL too long', function (done) {
         var root = fixtures + Array(10000).join('/foobar')
 
-        request(createServer(root, { 'fallthrough': false }))
+        request(createServer(root, { fallthrough: false }))
           .get('/')
           .expect(404, /ENAMETOOLONG/, done)
       })
 
       describe('with redirect: true', function () {
         before(function () {
-          this.server = createServer(fixtures, { 'fallthrough': false, 'redirect': true })
+          this.server = createServer(fixtures, { fallthrough: false, redirect: true })
         })
 
         it('should 404 when directory', function (done) {
@@ -381,7 +381,7 @@ describe('serveStatic()', function () {
 
       describe('with redirect: false', function () {
         before(function () {
-          this.server = createServer(fixtures, { 'fallthrough': false, 'redirect': false })
+          this.server = createServer(fixtures, { fallthrough: false, redirect: false })
         })
 
         it('should 404 when directory', function (done) {
@@ -402,7 +402,7 @@ describe('serveStatic()', function () {
   describe('hidden files', function () {
     var server
     before(function () {
-      server = createServer(fixtures, { 'dotfiles': 'allow' })
+      server = createServer(fixtures, { dotfiles: 'allow' })
     })
 
     it('should be served when dotfiles: "allow" is given', function (done) {
@@ -422,7 +422,7 @@ describe('serveStatic()', function () {
     })
 
     it('should set immutable directive in Cache-Control', function (done) {
-      request(createServer(fixtures, { 'immutable': true, 'maxAge': '1h' }))
+      request(createServer(fixtures, { immutable: true, maxAge: '1h' }))
         .get('/nums.txt')
         .expect('Cache-Control', 'public, max-age=3600, immutable', done)
     })
@@ -431,7 +431,7 @@ describe('serveStatic()', function () {
   describe('lastModified', function () {
     describe('when false', function () {
       it('should not include Last-Modifed', function (done) {
-        request(createServer(fixtures, { 'lastModified': false }))
+        request(createServer(fixtures, { lastModified: false }))
           .get('/nums.txt')
           .expect(shouldNotHaveHeader('Last-Modified'))
           .expect(200, '123456789', done)
@@ -440,7 +440,7 @@ describe('serveStatic()', function () {
 
     describe('when true', function () {
       it('should include Last-Modifed', function (done) {
-        request(createServer(fixtures, { 'lastModified': true }))
+        request(createServer(fixtures, { lastModified: true }))
           .get('/nums.txt')
           .expect('Last-Modified', /^\w{3}, \d+ \w+ \d+ \d+:\d+:\d+ \w+$/)
           .expect(200, '123456789', done)
@@ -450,14 +450,14 @@ describe('serveStatic()', function () {
 
   describe('maxAge', function () {
     it('should accept string', function (done) {
-      request(createServer(fixtures, { 'maxAge': '30d' }))
+      request(createServer(fixtures, { maxAge: '30d' }))
         .get('/todo.txt')
         .expect('cache-control', 'public, max-age=' + (60 * 60 * 24 * 30))
         .expect(200, done)
     })
 
     it('should be reasonable when infinite', function (done) {
-      request(createServer(fixtures, { 'maxAge': Infinity }))
+      request(createServer(fixtures, { maxAge: Infinity }))
         .get('/todo.txt')
         .expect('cache-control', 'public, max-age=' + (60 * 60 * 24 * 365))
         .expect(200, done)
@@ -524,7 +524,7 @@ describe('serveStatic()', function () {
     describe('when false', function () {
       var server
       before(function () {
-        server = createServer(fixtures, { 'redirect': false })
+        server = createServer(fixtures, { redirect: false })
       })
 
       it('should disable redirect', function (done) {
@@ -537,11 +537,11 @@ describe('serveStatic()', function () {
 
   describe('setHeaders', function () {
     it('should reject non-functions', function () {
-      assert.throws(serveStatic.bind(null, fixtures, { 'setHeaders': 3 }), /setHeaders.*function/)
+      assert.throws(serveStatic.bind(null, fixtures, { setHeaders: 3 }), /setHeaders.*function/)
     })
 
     it('should get called when sending file', function (done) {
-      var server = createServer(fixtures, { 'setHeaders': function (res) {
+      var server = createServer(fixtures, { setHeaders: function (res) {
         res.setHeader('x-custom', 'set')
       } })
 
@@ -552,7 +552,7 @@ describe('serveStatic()', function () {
     })
 
     it('should not get called on 404', function (done) {
-      var server = createServer(fixtures, { 'setHeaders': function (res) {
+      var server = createServer(fixtures, { setHeaders: function (res) {
         res.setHeader('x-custom', 'set')
       } })
 
@@ -563,7 +563,7 @@ describe('serveStatic()', function () {
     })
 
     it('should not get called on redirect', function (done) {
-      var server = createServer(fixtures, { 'setHeaders': function (res) {
+      var server = createServer(fixtures, { setHeaders: function (res) {
         res.setHeader('x-custom', 'set')
       } })
 
@@ -576,7 +576,7 @@ describe('serveStatic()', function () {
 
   describe('when traversing past root', function () {
     before(function () {
-      this.server = createServer(fixtures, { 'fallthrough': false })
+      this.server = createServer(fixtures, { fallthrough: false })
     })
 
     it('should catch urlencoded ../', function (done) {
@@ -787,7 +787,7 @@ describe('serveStatic()', function () {
   describe('when index file serving disabled', function () {
     var server
     before(function () {
-      server = createServer(fixtures, { 'index': false }, function (req) {
+      server = createServer(fixtures, { index: false }, function (req) {
         // mimic express/connect mount
         req.originalUrl = req.url
         req.url = '/' + req.url.split('/').slice(2).join('/')
