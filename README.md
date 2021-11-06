@@ -18,8 +18,6 @@ $ npm install serve-static
 
 ## API
 
-<!-- eslint-disable no-unused-vars -->
-
 ```js
 var serveStatic = require('serve-static')
 ```
