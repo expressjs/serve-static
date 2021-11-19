@@ -18,7 +18,7 @@
     "eslint-plugin-markdown": "2.2.1",
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-promise": "5.1.1",
-    "eslint-plugin-standard": "4.0.0",
+    "eslint-plugin-standard": "4.1.0",
     "istanbul": "0.4.5",
     "mocha": "7.2.0",
     "safe-buffer": "5.1.2",
