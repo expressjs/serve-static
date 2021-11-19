@@ -541,9 +541,11 @@ describe('serveStatic()', function () {
     })
 
     it('should get called when sending file', function (done) {
-      var server = createServer(fixtures, { setHeaders: function (res) {
-        res.setHeader('x-custom', 'set')
-      } })
+      var server = createServer(fixtures, {
+        setHeaders: function (res) {
+          res.setHeader('x-custom', 'set')
+        }
+      })
 
       request(server)
         .get('/nums.txt')
@@ -552,9 +554,11 @@ describe('serveStatic()', function () {
     })
 
     it('should not get called on 404', function (done) {
-      var server = createServer(fixtures, { setHeaders: function (res) {
-        res.setHeader('x-custom', 'set')
-      } })
+      var server = createServer(fixtures, {
+        setHeaders: function (res) {
+          res.setHeader('x-custom', 'set')
+        }
+      })
 
       request(server)
         .get('/bogus')
@@ -563,9 +567,11 @@ describe('serveStatic()', function () {
     })
 
     it('should not get called on redirect', function (done) {
-      var server = createServer(fixtures, { setHeaders: function (res) {
-        res.setHeader('x-custom', 'set')
-      } })
+      var server = createServer(fixtures, {
+        setHeaders: function (res) {
+          res.setHeader('x-custom', 'set')
+        }
+      })
 
       request(server)
         .get('/users')
