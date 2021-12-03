@@ -33,7 +33,7 @@ install:
   # Remove all non-test dependencies
   - ps: |
       # Remove coverage dependency
-      npm rm --silent --save-dev istanbul
+      npm rm --silent --save-dev nyc
       # Remove lint dependencies
       cmd.exe /c "node -pe `"Object.keys(require('./package').devDependencies).join('\n')`"" | `
         sls "^eslint(-|$)" | `
