@@ -41,7 +41,7 @@ describe('serveStatic()', function () {
     it('should set Content-Type', function (done) {
       request(server)
         .get('/todo.txt')
-        .expect('Content-Type', 'text/plain; charset=UTF-8')
+        .expect('Content-Type', 'text/plain; charset=utf-8')
         .expect(200, done)
     })
 

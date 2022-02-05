@@ -26,7 +26,6 @@ var url = require('url')
  */
 
 module.exports = serveStatic
-module.exports.mime = send.mime
 
 /**
  * @param {string} root
