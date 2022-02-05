@@ -1,5 +1,5 @@
-2.x
-===
+2.0.0-beta.1 / 2022-02-05
+=========================
 
   * Change `dotfiles` option default to `'ignore'`
   * Drop support for Node.js 0.8
