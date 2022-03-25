@@ -1,3 +1,15 @@
+unreleased
+==========
+
+  * deps: send@0.18.0
+    - Fix emitted 416 error missing headers property
+    - Limit the headers removed for 304 response
+    - deps: depd@2.0.0
+    - deps: destroy@1.2.0
+    - deps: http-errors@2.0.0
+    - deps: on-finished@2.4.1
+    - deps: statuses@2.0.1
+
 1.14.2 / 2021-12-15
 ===================
 
