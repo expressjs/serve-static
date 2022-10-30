@@ -19,6 +19,7 @@ var parseUrl = require('parseurl')
 var resolve = require('path').resolve
 var send = require('send')
 var url = require('url')
+var { eventHandler } = require('h3')
 
 /**
  * Module exports.
@@ -69,7 +70,7 @@ function serveStatic (root, options) {
     ? createRedirectDirectoryListener()
     : createNotFoundDirectoryListener()
 
-  return function serveStatic (req, res, next) {
+  return eventHandler(function serveStatic (req, res, next) {
     if (req.method !== 'GET' && req.method !== 'HEAD') {
       if (fallthrough) {
         return next()
@@ -123,7 +124,7 @@ function serveStatic (root, options) {
 
     // pipe
     stream.pipe(res)
-  }
+  })
 }
 
 /**
