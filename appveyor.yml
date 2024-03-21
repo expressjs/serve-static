@@ -15,10 +15,10 @@ environment:
     - nodejs_version: "11.15"
     - nodejs_version: "12.22"
     - nodejs_version: "13.14"
-    - nodejs_version: "14.18"
+    - nodejs_version: "14.19"
     - nodejs_version: "15.14"
-    - nodejs_version: "16.13"
-    - nodejs_version: "17.2"
+    - nodejs_version: "16.14"
+    - nodejs_version: "17.8"
 cache:
   - node_modules
 install:
@@ -61,10 +61,15 @@ install:
       # supertest for http calls
       # - use 2.0.0 for Node.js < 4
       # - use 3.4.2 for Node.js < 6
-      if ([int]$env:nodejs_version.split(".")[0] -lt 4) {
+      # - use 6.1.6 for Node.js < 8
+      if ([int]$env:nodejs_version.split(".")[0] -eq 0 -and [int]$env:nodejs_version.split(".")[1] -lt 10) {
+        npm install --silent --save-dev supertest@1.1.0
+      } elseif ([int]$env:nodejs_version.split(".")[0] -lt 4) {
         npm install --silent --save-dev supertest@2.0.0
       } elseif ([int]$env:nodejs_version.split(".")[0] -lt 6) {
         npm install --silent --save-dev supertest@3.4.2
+      } elseif ([int]$env:nodejs_version.split(".")[0] -lt 8) {
+        npm install --silent --save-dev supertest@6.1.6
       }
   # Update Node.js modules
   - ps: |
