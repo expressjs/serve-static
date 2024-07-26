@@ -1,3 +1,16 @@
+unreleased
+=========================
+
+* deps: 
+  * parseurl@^1.3.3
+  * excape-html@^1.0.3
+  * encodeurl@^2.0.0
+  * supertest@^6.3.4
+  * safe-buffer@^5.2.1
+  * nyc@^17.0.0
+  * mocha@^10.7.0
+* Changes from 1.x
+
 2.0.0-beta.2 / 2024-03-20
 =========================
 
