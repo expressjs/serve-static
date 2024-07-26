@@ -22,7 +22,7 @@
     "mocha": "^10.7.0",
     "nyc": "^17.0.0",
     "safe-buffer": "^5.2.1",
-    "supertest": "6.2.2"
+    "supertest": "^6.3.4"
   },
   "files": [
     "LICENSE",
