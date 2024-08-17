@@ -12,16 +12,10 @@
     "send": "^1.0.0"
   },
   "devDependencies": {
-    "eslint": "7.32.0",
-    "eslint-config-standard": "14.1.1",
-    "eslint-plugin-import": "2.25.4",
-    "eslint-plugin-markdown": "2.2.1",
-    "eslint-plugin-node": "11.1.0",
-    "eslint-plugin-promise": "5.2.0",
-    "eslint-plugin-standard": "4.1.0",
     "mocha": "^10.7.0",
     "nyc": "^17.0.0",
     "safe-buffer": "^5.2.1",
+    "semistandard": "^17.0.0",
     "supertest": "^6.3.4"
   },
   "files": [
@@ -33,7 +27,8 @@
     "node": ">= 18"
   },
   "scripts": {
-    "lint": "eslint .",
+    "lint": "semistandard",
+    "lint:fix": "semistandard --fix",
     "test": "mocha --reporter spec --bail --check-leaks test/",
     "test-ci": "nyc --reporter=lcov --reporter=text npm test",
     "test-cov": "nyc --reporter=html --reporter=text npm test",
