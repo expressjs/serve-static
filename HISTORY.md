@@ -1,3 +1,9 @@
+1.16.0 / 2024-09-10
+===================
+
+* Remove link renderization in html while redirecting
+
+
 1.15.0 / 2022-03-24
 ===================
 
