@@ -1,3 +1,8 @@
+2.1.0 / 2024-09-10
+===================
+
+* Changes from 1.16.0
+
 2.0.0 / 2024-08-23
 ==================
 
@@ -25,6 +30,11 @@
   * deps: send@1.0.0-beta.1
     - Use `mime-types` for file to content type mapping
     - deps: debug@3.1.0
+
+1.16.0 / 2024-09-10
+===================
+
+* Remove link renderization in html while redirecting
 
 1.15.0 / 2022-03-24
 ===================
