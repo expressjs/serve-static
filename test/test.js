@@ -483,7 +483,7 @@ describe('serveStatic()', function () {
       request(server)
         .get('/users')
         .expect('Location', '/users/')
-        .expect(301, /<a href="\/users\/">/, done)
+        .expect(301, /\/users\//, done)
     })
 
     it('should redirect directories with query string', function (done) {
@@ -505,7 +505,7 @@ describe('serveStatic()', function () {
         .get('/snow')
         .expect('Location', '/snow%20%E2%98%83/')
         .expect('Content-Type', /html/)
-        .expect(301, />Redirecting to <a href="\/snow%20%E2%98%83\/">\/snow%20%E2%98%83\/<\/a></, done)
+        .expect(301, />Redirecting to \/snow%20%E2%98%83\/</, done)
     })
 
     it('should respond with default Content-Security-Policy', function (done) {
