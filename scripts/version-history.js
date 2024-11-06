@@ -52,12 +52,6 @@ function repeat (str, length) {
   return out
 }
 
-function zeroPad (number, length) {
-  var num = number.toString()
-
-  while (num.length < length) {
-    num = '0' + num
-  }
-
-  return num
+function zeroPad(number, length) {
+  return number.toString().padStart(length, '0');
 }
