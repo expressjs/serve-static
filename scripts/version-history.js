@@ -30,7 +30,7 @@ if (historyFileLines[0].indexOf('x') !== -1) {
 }
 
 historyFileLines[0] = VERSION + ' / ' + getLocaleDate()
-historyFileLines[1] = repeat('=', historyFileLines[0].length)
+historyFileLines[1] = '='.repeat(historyFileLines[0].length)
 
 fs.writeFileSync(HISTORY_FILE_PATH, historyFileLines.join('\n'))
 
@@ -40,16 +40,6 @@ function getLocaleDate () {
   return zeroPad(now.getFullYear(), 4) + '-' +
     zeroPad(now.getMonth() + 1, 2) + '-' +
     zeroPad(now.getDate(), 2)
-}
-
-function repeat (str, length) {
-  var out = ''
-
-  for (var i = 0; i < length; i++) {
-    out += str
-  }
-
-  return out
 }
 
 function zeroPad (number, length) {
