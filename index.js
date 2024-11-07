@@ -127,6 +127,9 @@ function serveStatic (root, options) {
 
 /**
  * Collapse all leading slashes into a single slash
+ *
+ * @param {string} str
+ * @returns {string}
  * @private
  */
 
