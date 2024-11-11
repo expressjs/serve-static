@@ -53,11 +53,5 @@ function repeat (str, length) {
 }
 
 function zeroPad (number, length) {
-  var num = number.toString()
-
-  while (num.length < length) {
-    num = '0' + num
-  }
-
-  return num
+  return number.toString().padStart(length, '0')
 }
