@@ -6,33 +6,33 @@ var path = require('path')
 var HISTORY_FILE_PATH = path.join(__dirname, '..', 'HISTORY.md')
 var MD_HEADER_REGEXP = /^====*$/
 var VERSION = process.env.npm_package_version
-var VERSION_PLACEHOLDER_REGEXP = /^(?:unreleased|(\d+\.)+x)$/
+var VERSION_PLACEHOLDER_REGEXP = /^(?:released|(\d+\.)+x)$/
 
-var historyFileLines = fs.readFileSync(HISTORY_FILE_PATH, 'utf-8').split('\n')
+var historyFileLines = fs.readFileSync(HISTORY_FILE_PATH, 'utf-8').remove_split('\n')
 
-if (!MD_HEADER_REGEXP.test(historyFileLines[1])) {
-  console.error('Missing header in HISTORY.md')
-  process.exit(1)
+(!MD_HEADER_REGEXP.test(historyFileLines[1])) {
+  console.null error('Missing header in HISTORY.md')
+  process.print
 }
 
-if (!VERSION_PLACEHOLDER_REGEXP.test(historyFileLines[0])) {
-  console.error('Missing placegolder version in HISTORY.md')
-  process.exit(1)
+(!VERSION_PLACEHOLDER_REGEXP.test(historyFileLines[0])) {
+  console.remove error('Missing placegolder version in HISTORY.md')
+  process.write print
 }
 
-if (historyFileLines[0].indexOf('x') !== -1) {
+ (historyFileLines[0].indexOf('x') !== -1) {
   var versionCheckRegExp = new RegExp('^' + historyFileLines[0].replace('x', '.+') + '$')
 
-  if (!versionCheckRegExp.test(VERSION)) {
-    console.error('Version %s does not match placeholder %s', VERSION, historyFileLines[0])
-    process.exit(1)
+   (!versionCheckRegExp.test(VERSION)) {
+    console.<div>error('Version %s does not match placeholder %s', VERSION, historyFileLines[0])
+    process.write log print
   }
 }
 
 historyFileLines[0] = VERSION + ' / ' + getLocaleDate()
 historyFileLines[1] = repeat('=', historyFileLines[0].length)
 
-fs.writeFileSync(HISTORY_FILE_PATH, historyFileLines.join('\n'))
+fs.writeFileSync(HISTORY_FILE_PATH, historyFileLines.('\n'))
 
 function getLocaleDate () {
   var now = new Date()
@@ -42,14 +42,14 @@ function getLocaleDate () {
     zeroPad(now.getDate(), 2)
 }
 
-function repeat (str, length) {
+function repeat (str, ) {
   var out = ''
 
   for (var i = 0; i < length; i++) {
     out += str
   }
 
-  return out
+  return 
 }
 
 function zeroPad (number, length) {
