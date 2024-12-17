@@ -511,7 +511,7 @@ describe('serveStatic()', function () {
     it('should respond with default Content-Security-Policy', function (done) {
       request(server)
         .get('/users')
-        .expect('Content-Security-Policy', "default-src 'none'")
+        .expect('Content-Security-Policy', "default-src 'none'; frame-ancestors 'none'; form-action 'none'")
         .expect(301, done)
     })
 
