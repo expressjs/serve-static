@@ -207,6 +207,11 @@ function createRedirectDirectoryListener () {
   }
 }
 
+/**
+ * Set default value for the header only if it is not already set in the response
+ * @private
+ */
+
 function setHeaderIfNotSet (res, name, value) {
   if (!res.hasHeader(name)) {
     res.setHeader(name, value)
