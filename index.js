@@ -198,11 +198,22 @@ function createRedirectDirectoryListener () {
 
     // send redirect response
     res.statusCode = 301
-    res.setHeader('Content-Type', 'text/html; charset=UTF-8')
-    res.setHeader('Content-Length', Buffer.byteLength(doc))
-    res.setHeader('Content-Security-Policy', "default-src 'none'")
-    res.setHeader('X-Content-Type-Options', 'nosniff')
-    res.setHeader('Location', loc)
+    setHeaderIfNotSet(res, 'Content-Type', 'text/html; charset=UTF-8')
+    setHeaderIfNotSet(res, 'Content-Length', Buffer.byteLength(doc))
+    setHeaderIfNotSet(res, 'Content-Security-Policy', "default-src 'none'")
+    setHeaderIfNotSet(res, 'X-Content-Type-Options', 'nosniff')
+    setHeaderIfNotSet(res, 'Location', loc)
     res.end(doc)
+  }
+}
+
+/**
+ * Set default value for the header only if it is not already set in the response
+ * @private
+ */
+
+function setHeaderIfNotSet (res, name, value) {
+  if (!res.hasHeader(name)) {
+    res.setHeader(name, value)
   }
 }
