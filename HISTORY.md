@@ -27,6 +27,7 @@
   * Change `dotfiles` option default to `'ignore'`
   * Drop support for Node.js 0.8
   * Remove `hidden` option; use `dotfiles` option instead
+  * Remove `mime` export; use `mime-types` package instead
   * deps: send@1.0.0-beta.1
     - Use `mime-types` for file to content type mapping
     - deps: debug@3.1.0
