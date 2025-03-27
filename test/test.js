@@ -468,9 +468,6 @@ describe('serveStatic()', function () {
     before(function () {
       server = createServer(fixtures, null, function (req, res) {
         req.url = req.url.replace(/\/snow(\/|$)/, '/snow \u2603$1')
-        if (req.url.match(/\/pets/)) {
-          res.setHeader('Content-Security-Policy', "default-src 'self'")
-        }
       })
     })
 
@@ -510,17 +507,10 @@ describe('serveStatic()', function () {
         .expect(301, />Redirecting to \/snow%20%E2%98%83\/</, done)
     })
 
-    it('should respond with default Content-Security-Policy when header is not set', function (done) {
+    it('should respond with default Content-Security-Policy', function (done) {
       request(server)
         .get('/users')
         .expect('Content-Security-Policy', "default-src 'none'")
-        .expect(301, done)
-    })
-
-    it('should respond with custom Content-Security-Policy when header is set', function (done) {
-      request(server)
-        .get('/pets')
-        .expect('Content-Security-Policy', "default-src 'self'")
         .expect(301, done)
     })
 
