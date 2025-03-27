@@ -2,6 +2,7 @@
 ===================
 
 * Changes from 1.16.0
+* In the next major version, headers will no longer be overwritten when redirecting a directory.
 
 2.0.0 / 2024-08-23
 ==================

@@ -15,6 +15,7 @@
 
 var encodeUrl = require('encodeurl')
 var escapeHtml = require('escape-html')
+const deprecate = require('depd')('serve-static')
 var parseUrl = require('parseurl')
 var resolve = require('path').resolve
 var send = require('send')
@@ -213,7 +214,9 @@ function createRedirectDirectoryListener () {
  */
 
 function setHeaderIfNotSet (res, name, value) {
-  if (!res.hasHeader(name)) {
-    res.setHeader(name, value)
+  if (res.hasHeader(name)) {
+    deprecate('The headers will not be overwritten in the next version')
   }
+
+  res.setHeader(name, value)
 }
