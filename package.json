@@ -19,9 +19,9 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.2.0",
     "eslint-plugin-standard": "^4.1.0",
-    "mocha": "^10.7.0",
-    "nyc": "^17.0.0",
-    "supertest": "^6.3.4"
+    "mocha": "^11.1.0",
+    "nyc": "^17.1.0",
+    "supertest": "^7.1.0"
   },
   "files": [
     "LICENSE",
