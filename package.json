@@ -5,6 +5,10 @@
   "author": "Douglas Christopher Wilson <doug@somethingdoug.com>",
   "license": "MIT",
   "repository": "expressjs/serve-static",
+  "funding": {
+    "type": "opencollective",
+    "url": "https://opencollective.com/express"
+  },
   "dependencies": {
     "encodeurl": "^2.0.0",
     "escape-html": "^1.0.3",
