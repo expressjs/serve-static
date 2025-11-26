@@ -1,3 +1,8 @@
+2.2.1 / 2025-12-15
+==================
+
+* Minor changes (documentation, package metadata...)
+
 2.2.0 / 2025-03-27
 ==================
 
