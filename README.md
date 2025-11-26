@@ -88,6 +88,20 @@ all methods.
 
 The default value is `true`.
 
+##### followsymlinks
+
+Determines how serve-static will handle how files or paths containing symlinks
+are handled. Setting `followsymlinks` to `false` will cause serve-static to 
+reject requests for files that have a symlink in their path.
+
+The default value is `true`.
+
+Note that setting `followsymlinks` to `false` also causes the the module
+to resolve any symbolic links in the root path during startup. This means
+that if your root path does contain symlinks, changes to those symlinks after
+application startup will not be noticed.
+
+
 ##### immutable
 
 Enable or disable the `immutable` directive in the `Cache-Control` response
