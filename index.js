@@ -17,6 +17,8 @@ var encodeUrl = require('encodeurl')
 var escapeHtml = require('escape-html')
 var parseUrl = require('parseurl')
 var resolve = require('path').resolve
+var fs = require('fs')
+var constants = fs.constants || require('constants') // eslint-disable-line node/no-deprecated-api
 var send = require('send')
 var url = require('url')
 
@@ -49,6 +51,10 @@ function serveStatic (root, options) {
   // fall-though
   var fallthrough = opts.fallthrough !== false
 
+  // handle symlinks
+  var realroot
+  var followsymlinks = true
+
   // default redirect
   var redirect = opts.redirect !== false
 
@@ -62,6 +68,16 @@ function serveStatic (root, options) {
   // setup options for send
   opts.maxage = opts.maxage || opts.maxAge || 0
   opts.root = resolve(root)
+
+  // only set followsymlinks to false if it was explicitly set
+  if (opts.followsymlinks === false) {
+    followsymlinks = false
+    realroot = fs.realpathSync(root)
+    opts.flags = constants.O_RDONLY | constants.O_NOFOLLOW
+    // if followsymlinks is disabled, we need the fully resolved
+    // (un-symlink'd) root to start
+    opts.root = realroot
+  }
 
   // construct directory listener
   var onDirectory = redirect
@@ -85,10 +101,33 @@ function serveStatic (root, options) {
     var forwardError = !fallthrough
     var originalUrl = parseUrl.original(req)
     var path = parseUrl(req).pathname
+    var fullpath, realpath
 
     // make sure redirect occurs at mount
     if (path === '/' && originalUrl.pathname.substr(-1) !== '/') {
       path = ''
+    }
+
+    if (followsymlinks === false) {
+      fullpath = realroot + path
+      try {
+        realpath = fs.realpathSync(realroot + path)
+      } catch (e) {
+        realpath = undefined
+      }
+      // if the full path and the real path are not the same,
+      // then there is a symlink somewhere along the way
+      if (fullpath !== realpath) {
+        if (fallthrough) {
+          return next()
+        }
+
+        // forbidden on symlinks
+        res.statusCode = 403
+        res.setHeader('Content-Length', '0')
+        res.end()
+        return
+      }
     }
 
     // create send stream
