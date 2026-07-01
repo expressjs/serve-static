@@ -40,5 +40,9 @@
     "test-ci": "nyc --reporter=lcov --reporter=text npm test",
     "test-cov": "nyc --reporter=html --reporter=text npm test",
     "version": "node scripts/version-history.js && git add HISTORY.md"
+  },
+  "homepage": "https://github.com/expressjs/serve-static",
+  "bugs": {
+    "url": "https://github.com/expressjs/serve-static/issues"
   }
 }
