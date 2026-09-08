@@ -398,6 +398,30 @@ describe('serveStatic()', function () {
     })
   })
 
+  describe('followSymlinks', function () {
+    it('should default to true', function (done) {
+      request(createServer(fixtures))
+        .get('/todo.txt')
+        .expect(200, '- groceries', done)
+    })
+
+    describe('when false', function () {
+      it('should accept followSymlinks: false', function (done) {
+        request(createServer(fixtures, { followSymlinks: false }))
+          .get('/todo.txt')
+          .expect(200, '- groceries', done)
+      })
+    })
+
+    describe('when true', function () {
+      it('should accept followSymlinks: true', function (done) {
+        request(createServer(fixtures, { followSymlinks: true }))
+          .get('/todo.txt')
+          .expect(200, '- groceries', done)
+      })
+    })
+  })
+
   describe('hidden files', function () {
     var server
     before(function () {

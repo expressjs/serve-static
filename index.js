@@ -60,6 +60,9 @@ function serveStatic (root, options) {
   }
 
   // setup options for send
+  opts.followSymlinks = opts.followSymlinks !== undefined
+    ? opts.followSymlinks
+    : true
   opts.maxage = opts.maxage || opts.maxAge || 0
   opts.root = resolve(root)
 

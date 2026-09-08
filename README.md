@@ -88,6 +88,11 @@ all methods.
 
 The default value is `true`.
 
+##### followSymlinks
+
+Enable or disable following symbolic links, defaults to `true`. Set to `false`
+to restrict symlink traversal outside root.
+
 ##### immutable
 
 Enable or disable the `immutable` directive in the `Cache-Control` response
