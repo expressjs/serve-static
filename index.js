@@ -46,7 +46,7 @@ function serveStatic (root, options) {
   // copy options object
   var opts = Object.create(options || null)
 
-  // fall-though
+  // fall-through
   var fallthrough = opts.fallthrough !== false
 
   // default redirect
