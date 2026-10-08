@@ -127,17 +127,15 @@ function serveStatic (root, options) {
 
 /**
  * Collapse all leading slashes into a single slash
+ * @param {string} str
  * @private
  */
 function collapseLeadingSlashes (str) {
-  for (var i = 0; i < str.length; i++) {
-    if (str.charCodeAt(i) !== 0x2f /* / */) {
-      break
-    }
-  }
+  let i
+  for (i = 0; i < str.length && str.charCodeAt(i) === 0x2f; i++);
 
   return i > 1
-    ? '/' + str.substr(i)
+    ? '/' + str.slice(i)
     : str
 }
 
