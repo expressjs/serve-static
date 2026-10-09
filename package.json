@@ -16,6 +16,7 @@
     "send": "^1.2.0"
   },
   "devDependencies": {
+    "@types/node": "18.19.130",
     "eslint": "7.32.0",
     "eslint-config-standard": "14.1.1",
     "eslint-plugin-import": "2.32.0",
@@ -29,7 +30,8 @@
   },
   "files": [
     "LICENSE",
-    "index.js"
+    "index.js",
+    "index.d.ts"
   ],
   "engines": {
     "node": ">= 18"
