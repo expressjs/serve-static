@@ -238,6 +238,113 @@ function setCustomCacheControl (res, file) {
 }
 ```
 
+## Security
+
+`serve-static` serves every file inside the `root` directory you point it
+at. Treat that directory as a public boundary: assume anything inside it
+can be requested and returned.
+
+The `dotfiles` option helps avoid serving dot-prefixed files, but it is
+not an access-control boundary. As noted above, the `dotfiles` check is
+done on the request path as a string, without checking the disk, so it can
+be bypassed by filesystem features that let a different request path
+resolve to the same file, such as symbolic links and some operating-system
+filename aliases. Keep sensitive files out of the served directory rather
+than relying on `dotfiles` or path filtering to hide them.
+
+### Keep secrets out of the served root
+
+Use sibling directories, not nested ones, so the served root only ever
+contains public assets:
+
+```
+project/
+  public/            served:  serveStatic('public')
+    index.html
+    style.css
+  private/           never served
+    contracts.json
+    customers.json
+    reports/
+```
+
+Serve only `public/`. Keep private data out of the served directory
+entirely. Nesting it deeper, such as `public/data/private/records.json`,
+does not help, because everything under the served root is reachable by
+default, and `dotfiles` is not a boundary you can rely on.
+Express is intentionally unopinionated about project layout, but mixing
+private data into a served directory is an antipattern to avoid for
+security reasons.
+
+```js
+const express = require('express')
+const path = require('path')
+const serveStatic = require('serve-static')
+
+const app = express()
+
+// The served root holds public assets only
+app.use(serveStatic(path.join(__dirname, 'public')))
+```
+
+### Access-controlled files
+
+For files that require authentication or authorization, do not serve them
+statically. Gate the request first, then send the specific file you intend
+to expose:
+
+```js
+const express = require('express')
+const path = require('path')
+const { requireAuth, canReadReport } = require('./auth')
+
+const app = express()
+const reportsDir = path.join(__dirname, 'private', 'reports')
+
+app.get('/reports/:id', requireAuth, (req, res) => {
+  // Validate the id against an allowlist of characters before using it in
+  // a path, so a value like "../secrets" cannot escape reportsDir.
+  if (!/^[a-zA-Z0-9_-]+$/.test(req.params.id)) {
+    return res.sendStatus(400)
+  }
+
+  // Authentication is not authorization: confirm this user may read this
+  // specific report, not just that they are signed in.
+  if (!canReadReport(req.user, req.params.id)) {
+    return res.sendStatus(403)
+  }
+
+  // Send the file, confined to the reports directory with the root option.
+  res.sendFile(`${req.params.id}.pdf`, { root: reportsDir })
+})
+```
+
+Authorization logic is easy to get subtly wrong, so it is highly
+recommended to cover it with tests that exercise the full authorization
+matrix: for each role, assert both the resources it may read and the ones
+it must not, including unauthenticated and cross-user requests.
+
+Where access depends on parsing or validating complex input, such as
+path segments or request bodies, consider fuzzing those critical routes
+too, so malformed or unexpected input cannot slip past the check.
+
+To gate a static mount, register the middleware before the `serveStatic`
+handler on the same path. Within a mount, `serveStatic` resolves files
+from the mount-relative `req.url`, so read `req.originalUrl` if your guard
+needs the full request path.
+
+```js
+const express = require('express')
+const path = require('path')
+const serveStatic = require('serve-static')
+const { requireAuth } = require('./auth')
+
+const app = express()
+const internalDir = path.join(__dirname, 'private', 'internal')
+
+app.use('/internal', requireAuth, serveStatic(internalDir))
+```
+
 ## License
 
 [MIT](LICENSE)
