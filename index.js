@@ -16,7 +16,8 @@
 var encodeUrl = require('encodeurl')
 var escapeHtml = require('escape-html')
 var parseUrl = require('parseurl')
-var resolve = require('path').resolve
+var path = require('path')
+var resolve = path.resolve
 var send = require('send')
 var url = require('url')
 
@@ -163,6 +164,31 @@ function createHtmlDocument (title, body) {
 }
 
 /**
+ * Normalize a URL pathname by collapsing leading slashes and resolving
+ * dot segments, so the redirect target matching an existing directory is
+ * expressed the same way "send" resolved it on the file system.
+ *
+ * Leading slashes are collapsed before resolving so the result of the
+ * resolution can never start with two slashes, which would make the
+ * Location header protocol-relative.
+ *
+ * @param {string} pathname
+ * @return {string}
+ * @private
+ */
+
+function normalizePathname (pathname) {
+  var segments = pathname.split('/').map(function (segment) {
+    // WHATWG URL treats a segment spelled only with %2e (in any case) and dots
+    // as "." or "..". "send" decodes the path before resolving it, so the
+    // redirect has to resolve the same segment the same way.
+    var dots = segment.replace(/%2e/gi, '.')
+    return /^\.+$/.test(dots) ? dots : segment
+  })
+  return path.posix.normalize(collapseLeadingSlashes(segments.join('/') + '/'))
+}
+
+/**
  * Create a directory listener that just 404s.
  * @private
  */
@@ -188,9 +214,9 @@ function createRedirectDirectoryListener () {
     // get original URL
     var originalUrl = parseUrl.original(this.req)
 
-    // append trailing slash
+    // append trailing slash, resolving any dot segments
     originalUrl.path = null
-    originalUrl.pathname = collapseLeadingSlashes(originalUrl.pathname + '/')
+    originalUrl.pathname = normalizePathname(originalUrl.pathname)
 
     // reformat the URL
     var loc = encodeUrl(url.format(originalUrl))
