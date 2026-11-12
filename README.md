@@ -289,9 +289,29 @@ app.use(serveStatic(path.join(__dirname, 'public')))
 
 ### Access-controlled files
 
-For files that require authentication or authorization, do not serve them
-statically. Gate the request first, then send the specific file you intend
-to expose:
+`serve-static` does not authenticate or authorize requests; it serves
+whatever is under the mounted root. Put the access check in front of it.
+Two patterns work, depending on how fine-grained the control needs to be.
+
+Guard a whole mount. When every file under a path requires the same
+access, register the authorization middleware before `serveStatic` on that
+path:
+
+```js
+const express = require('express')
+const path = require('path')
+const serveStatic = require('serve-static')
+const { requireAuth } = require('./auth')
+
+const app = express()
+const internalDir = path.join(__dirname, 'private', 'internal')
+
+app.use('/internal', requireAuth, serveStatic(internalDir))
+```
+
+Gate individual files. When access depends on the specific file or user,
+do not serve the directory statically. Gate the request, then send the one
+file you intend to expose:
 
 ```js
 const express = require('express')
@@ -327,23 +347,6 @@ it must not, including unauthenticated and cross-user requests.
 Where access depends on parsing or validating complex input, such as
 path segments or request bodies, consider fuzzing those critical routes
 too, so malformed or unexpected input cannot slip past the check.
-
-To gate a static mount, register the middleware before the `serveStatic`
-handler on the same path. Within a mount, `serveStatic` resolves files
-from the mount-relative `req.url`, so read `req.originalUrl` if your guard
-needs the full request path.
-
-```js
-const express = require('express')
-const path = require('path')
-const serveStatic = require('serve-static')
-const { requireAuth } = require('./auth')
-
-const app = express()
-const internalDir = path.join(__dirname, 'private', 'internal')
-
-app.use('/internal', requireAuth, serveStatic(internalDir))
-```
 
 ## License
 
